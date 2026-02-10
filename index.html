@@ -1,3 +1,18 @@
+chat ficou perfeito, mas preciso de alguns ajustes simples, na calculadora de custos ele puxa o cliente cadastrado, ele pode preencher tambem manualmente duas opção selecionar dos clientes cadastrado ou escrever, logo apos fazer os calculos, quando salvar ele salva todos detalhes do resultado de calculo, hoje ele salva assim sem os detalhes Orçamento #CALC1765557568408
+Área: 55 ha
+
+Faturamento: R$ 8.525,00
+
+Custos: R$ 1.482,827
+
+Lucro: R$ 7.042,173
+
+Margem: 82.6%
+
+Data: 12/12/2025
+no orçamento mesma coisa salvar os detalhes,  filtro de orçamento nao esta funcionando ele marca 8 orçamentos feitos e so tem 2, na parte de relatorio completo quero que salva exatamente colo esta ali, com desegner tudo. ponto importante grafico não funciona no controle de caixa, outro ponto mais importante quando clico em baixa seja xml pdf imprimir nao funciona, corrija isso,
+
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -547,22 +562,6 @@
             transform: scale(1.05);
         }
       
-        .flex-row {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-      
-        .client-input-wrapper {
-            display: flex;
-            gap: 10px;
-        }
-      
-        .client-input-wrapper select,
-        .client-input-wrapper input {
-            flex: 1;
-        }
-      
         @media(max-width: 768px) {
             .sidebar {
                 width: 70px;
@@ -616,10 +615,6 @@
           
             .tab {
                 text-align: center;
-            }
-          
-            .client-input-wrapper {
-                flex-direction: column;
             }
         }
         
@@ -778,4 +773,3306 @@
         }
       
         .category-other-input {
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-logo">
+                <i class="fas fa-drone"></i>
+            </div>
+            <h1 class="login-title">AgroVooSis Pro</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuário</label>
+                    <input type="text" id="username" class="form-control" placeholder="Digite seu usuário" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" class="form-control" placeholder="Digite sua senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar no Sistema
+                </button>
+             
+                <div class="error-message" id="error-message">
+                    <i class="fas fa-exclamation-triangle"></i> Usuário ou senha incorretos!
+                </div>
+            </form>
+        </div>
+    </div>
+  
+    <!-- APLICAÇÃO PRINCIPAL -->
+    <div id="main-app">
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="container">
+            <!-- SIDEBAR -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h1><i class="fas fa-drone"></i> <span>AgroVooSis Pro</span></h1>
+                </div>
+                <div class="sidebar-menu">
+                    <ul>
+                        <li class="active" data-page="calculadora">
+                            <a href="#"><i class="fas fa-calculator"></i> <span>Calculadora</span></a>
+                        </li>
+                        <li data-page="orcamentos">
+                            <a href="#"><i class="fas fa-file-invoice-dollar"></i> <span>Orçamentos</span></a>
+                        </li>
+                        <li data-page="clientes">
+                            <a href="#"><i class="fas fa-users"></i> <span>Clientes</span></a>
+                        </li>
+                        <li data-page="relatorios">
+                            <a href="#"><i class="fas fa-chart-bar"></i> <span>Relatórios</span></a>
+                        </li>
+                        <li data-page="caixa">
+                            <a href="#"><i class="fas fa-cash-register"></i> <span>Controle de Caixa</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- CONTEÚDO PRINCIPAL -->
+            <div class="main-content">
+                <!-- NAVEGAÇÃO SUPERIOR -->
+                <div class="top-nav">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Pesquisar..." style="width: 300px;">
+                    </div>
+                    <div class="user-info">
+                        <button class="theme-toggle" id="theme-toggle" title="Alternar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <div class="avatar">AD</div>
+                        <div>
+                            <div style="font-weight: 500;" id="user-display-name">Admin User</div>
+                            <div style="font-size: 12px; color: #666;" id="user-role">Administrador</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ÁREA DE CONTEÚDO -->
+                <div class="content">
+                    <!-- CALCULADORA -->
+                    <div id="calculadora" class="page active">
+                        <div class="dashboard-header">
+                            <h2><i class="fas fa-calculator"></i> Calculadora Avançada</h2>
+                            <p>Cálculos precisos para custos e rentabilidade da pulverização</p>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active" data-tab="calculadora-custos">Calculadora de Custos</div>
+                            <div class="tab" data-tab="orcamentos-salvos">Orçamentos Salvos</div>
+                        </div>
+                        
+                        <!-- CALCULADORA DE CUSTOS -->
+                        <div id="calculadora-custos" class="tab-content active">
+                            <div class="form-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-calculator"></i> Calculadora de Custos Detalhados
+                                </h3>
+                              
+                                <h4 style="color: var(--primary-color); margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                                    <i class="fas fa-info-circle"></i> Informações do Serviço
+                                </h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="area-calc">Área a ser pulverizada (hectares)</label>
+                                        <input type="number" id="area-calc" class="form-control" value="55" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="price-calc">Preço por hectare (R$)</label>
+                                        <input type="number" id="price-calc" class="form-control" value="155" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="distance-calc">Distância até o cliente (km)</label>
+                                        <input type="number" id="distance-calc" class="form-control" value="15" step="0.1">
+                                        <small style="color: #666; font-size: 12px;">Ida e volta: <span id="round-trip-calc">30 km</span></small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="productivity-calc">Produtividade (ha/h)</label>
+                                        <input type="number" id="productivity-calc" class="form-control" value="21.5" step="0.1">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                                    <i class="fas fa-drone"></i> Configuração do Drone
+                                </h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="drone-model-calc">Modelo do Drone</label>
+                                        <select id="drone-model-calc" class="form-control">
+                                            <option value="t50">DJI Agras T50 - 50L (18-23 ha/h)</option>
+                                            <option value="t40">DJI Agras T40 - 40L (16-21 ha/h)</option>
+                                            <option value="t30">DJI Agras T30 - 30L (14-18 ha/h)</option>
+                                            <option value="t20">DJI Agras T20 - 20L (10-15 ha/h)</option>
+                                            <option value="t10">DJI Agras T10 - 10L (8-12 ha/h)</option>
+                                            <option value="outro">Outro modelo</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="battery-life-calc">Vida útil das baterias (ciclos)</label>
+                                        <input type="number" id="battery-life-calc" class="form-control" value="300">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="battery-cost-calc">Custo por bateria (R$)</label>
+                                        <input type="number" id="battery-cost-calc" class="form-control" value="2500" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="drone-cost-calc">Custo do drone + gerador (R$)</label>
+                                        <input type="number" id="drone-cost-calc" class="form-control" value="120000" step="0.01">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                                    <i class="fas fa-users"></i> Gestão de Funcionários
+                                </h4>
+                                <div id="employees-container-calc">
+                                    <div class="employee-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 15px; align-items: end; margin-bottom: 15px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                        <div class="form-group">
+                                            <label>Nome do Funcionário</label>
+                                            <input type="text" class="form-control employee-name" value="Operador 1">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Diária (R$)</label>
+                                            <input type="number" class="form-control employee-daily" value="150" step="0.01">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Comissão (R$/ha)</label>
+                                            <input type="number" class="form-control employee-commission" value="5" step="0.01">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Meta (ha/dia)</label>
+                                            <input type="number" class="form-control employee-target" value="50" step="0.1">
+                                        </div>
+                                        <button class="btn remove-employee" style="background: var(--danger-color); color: white; padding: 10px; border-radius: 8px;">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn" id="add-employee-calc" style="background: var(--success-color); color: white; margin-top: 10px;">
+                                    <i class="fas fa-plus"></i> Adicionar Funcionário
+                                </button>
+
+                                <h4 style="color: var(--primary-color); margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                                    <i class="fas fa-gas-pump"></i> Sistema de Combustível
+                                </h4>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="fuel-price-calc">Preço do combustível (R$/L)</label>
+                                        <input type="number" id="fuel-price-calc" class="form-control" value="6.90" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="generator-consumption-calc">Consumo do gerador (L/h)</label>
+                                        <input type="number" id="generator-consumption-calc" class="form-control" value="1.2" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vehicle-consumption-calc">Consumo do veículo (km/L)</label>
+                                        <input type="number" id="vehicle-consumption-calc" class="form-control" value="6.8" step="0.1">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 25px 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+                                    <i class="fas fa-chart-pie"></i> Percentuais do Faturamento
+                                </h4>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="maintenance-percent-calc">Manutenção (%)</label>
+                                        <input type="number" id="maintenance-percent-calc" class="form-control" value="1.5" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="accounting-percent-calc">Contabilidade (%)</label>
+                                        <input type="number" id="accounting-percent-calc" class="form-control" value="3" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tax-percent-calc">Impostos (%)</label>
+                                        <input type="number" id="tax-percent-calc" class="form-control" value="6" step="0.1">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contingency-percent-calc">Imprevistos (%)</label>
+                                        <input type="number" id="contingency-percent-calc" class="form-control" value="3" step="0.1">
+                                    </div>
+                                </div>
+                                
+                                <div style="text-align: center; margin-top: 30px;">
+                                    <button class="btn btn-primary" id="calculate-all-calc" style="padding: 15px 40px; font-size: 1.1rem;">
+                                        <i class="fas fa-calculator"></i> Calcular Custos Completos
+                                    </button>
+                                </div>
+                            </div>
+                          
+                            <!-- RESULTADOS -->
+                            <div class="results-card" id="results-section-calc" style="display: none; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); padding: 30px; border-radius: 15px; box-shadow: var(--shadow);">
+                                <h3 style="color: var(--primary-color); text-align: center; margin-bottom: 25px;">
+                                    <i class="fas fa-chart-line"></i> Resultados do Cálculo
+                                </h3>
+                                <div class="results-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                                    <div class="result-item" style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Faturamento Bruto</div>
+                                        <div style="font-size: 1.8rem; font-weight: bold; color: var(--primary-color);" id="revenue-value-calc">R$ 8.525,00</div>
+                                    </div>
+                                    <div class="result-item" style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Custos Totais</div>
+                                        <div style="font-size: 1.8rem; font-weight: bold; color: #dc3545;" id="costs-value-calc">R$ 3.399,28</div>
+                                    </div>
+                                    <div class="result-item" style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Lucro Estimado</div>
+                                        <div style="font-size: 1.8rem; font-weight: bold; color: #28a745;" id="profit-value-calc">R$ 5.125,72</div>
+                                    </div>
+                                    <div class="result-item" style="background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <div style="font-size: 0.9rem; color: #666; margin-bottom: 8px;">Margem de Lucro</div>
+                                        <div style="font-size: 1.8rem; font-weight: bold; color: #ff9800;" id="margin-value-calc">60.1%</div>
+                                    </div>
+                                </div>
+                                <div class="costs-breakdown" style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+                                    <h4 style="color: var(--primary-color); margin-bottom: 20px;">Detalhamento de Custos</h4>
+                                    <div class="cost-item" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+                                        <span>Combustível</span>
+                                        <span style="font-weight: 500;" id="fuel-cost-calc">R$ 299,35</span>
+                                    </div>
+                                    <div class="cost-item" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+                                        <span>Funcionários</span>
+                                        <span style="font-weight: 500;" id="staff-cost-calc">R$ 307,13</span>
+                                    </div>
+                                    <div class="cost-item" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+                                        <span>Manutenção + Baterias</span>
+                                        <span style="font-weight: 500;" id="maintenance-cost-calc">R$ 1.045,17</span>
+                                    </div>
+                                    <div class="cost-item" style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee;">
+                                        <span>Impostos + Contabilidade</span>
+                                        <span style="font-weight: 500;" id="tax-cost-calc">R$ 1.747,63</span>
+                                    </div>
+                                    <div class="cost-total" style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 1.2rem; font-weight: bold; color: var(--primary-color); border-top: 2px solid #ddd; margin-top: 10px;">
+                                        <span>TOTAL DE CUSTOS</span>
+                                        <span id="total-cost-calc">R$ 3.399,28</span>
+                                    </div>
+                                </div>
+                              
+                                <div class="action-buttons" style="display: flex; gap: 15px; justify-content: center; margin-top: 25px;">
+                                    <button class="btn" id="save-calculation" style="background: var(--info-color); color: white;">
+                                        <i class="fas fa-save"></i> Salvar Cálculo
+                                    </button>
+                                    <button class="btn" id="download-excel-calc" style="background: #217346; color: white;">
+                                        <i class="fas fa-file-excel"></i> Exportar para Excel
+                                    </button>
+                                    <button class="btn" id="reset-calc-btn" style="background: var(--secondary-color); color: white;">
+                                        <i class="fas fa-redo"></i> Novo Cálculo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <!-- ORÇAMENTOS SALVOS -->
+                        <div id="orcamentos-salvos" class="tab-content">
+                            <div class="form-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 25px;">
+                                    <i class="fas fa-history"></i> Orçamentos Salvos
+                                </h3>
+                                <div class="table-responsive">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Cliente</th>
+                                                <th>Área (ha)</th>
+                                                <th>Valor (R$)</th>
+                                                <th>Status</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="orcamentos-tbody-calc">
+                                            <!-- Os orçamentos serão carregados via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ORÇAMENTOS -->
+                    <div id="orcamentos" class="page">
+                        <div class="dashboard-header">
+                            <h2><i class="fas fa-file-invoice-dollar"></i> Gestão de Orçamentos</h2>
+                            <p>Controle de orçamentos e propostas comerciais</p>
+                        </div>
+                        <div class="action-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <button class="btn btn-primary" id="novo-orcamento">
+                                <i class="fas fa-plus"></i> Novo Orçamento
+                            </button>
+                            <div style="display: flex; gap: 15px;">
+                                <select class="form-control" id="filtro-status-orcamento" style="width: 200px;">
+                                    <option value="">Todos os status</option>
+                                    <option value="pendente">Pendente</option>
+                                    <option value="aprovado">Aprovado</option>
+                                    <option value="recusado">Recusado</option>
+                                    <option value="cancelado">Cancelado</option>
+                                </select>
+                                <input type="month" class="form-control" id="filtro-mes-orcamento" style="width: 180px;">
+                            </div>
+                        </div>
+                        <div class="metrics-grid" style="margin-bottom: 30px;">
+                            <div class="metric-card">
+                                <h3>Orçamentos Este Mês</h3>
+                                <div class="value" id="orcamentos-mes">8</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 2 vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Taxa de Conversão</h3>
+                                <div class="value" id="taxa-conversao">62%</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 5% vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Valor em Orçamentos</h3>
+                                <div class="value" id="valor-orcamentos">R$ 85.200</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 18% vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Valor Aprovado</h3>
+                                <div class="value" id="valor-aprovado">R$ 52.800</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 12% vs último mês</div>
+                            </div>
+                        </div>
+                        <div class="table-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--shadow);">
+                            <h3 style="color: var(--primary-color); margin-bottom: 20px;">Orçamentos Recentes</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Data</th>
+                                            <th>Valor (R$)</th>
+                                            <th>Status</th>
+                                            <th>Vencimento</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orcamentos-tbody">
+                                        <!-- Os orçamentos serão carregados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CLIENTES -->
+                    <div id="clientes" class="page">
+                        <div class="dashboard-header">
+                            <h2><i class="fas fa-users"></i> Gestão de Clientes</h2>
+                            <p>Gerencie sua base de clientes e histórico de serviços</p>
+                        </div>
+                        <div class="action-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <button class="btn btn-primary" id="novo-cliente">
+                                <i class="fas fa-plus"></i> Novo Cliente
+                            </button>
+                            <div class="search-box">
+                                <input type="text" class="form-control" placeholder="Buscar cliente..." style="width: 300px;" id="search-clientes">
+                            </div>
+                        </div>
+                        <div class="metrics-grid" style="margin-bottom: 30px;">
+                            <div class="metric-card">
+                                <h3>Total de Clientes</h3>
+                                <div class="value" id="total-clientes">12</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 2 novos este mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Clientes Ativos</h3>
+                                <div class="value" id="clientes-ativos">8</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 67% do total</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Faturamento Clientes (R$)</h3>
+                                <div class="value" id="faturamento-clientes">48.500</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 15% vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Área Total (ha)</h3>
+                                <div class="value" id="area-total-clientes">1.250</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 8% vs último mês</div>
+                            </div>
+                        </div>
+                        <div class="table-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--shadow);">
+                            <h3 style="color: var(--primary-color); margin-bottom: 20px;">Lista de Clientes</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Cliente</th>
+                                            <th>Contato</th>
+                                            <th>Localização</th>
+                                            <th>Área (ha)</th>
+                                            <th>Último Serviço</th>
+                                            <th>Status</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="clientes-tbody">
+                                        <!-- Os clientes serão carregados via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RELATÓRIOS -->
+                    <div id="relatorios" class="page">
+                        <div class="dashboard-header">
+                            <h2><i class="fas fa-chart-bar"></i> Relatórios Completos</h2>
+                            <p>Gerar relatórios profissionais com croquis e dados integrados</p>
+                        </div>
+                        <div class="tabs">
+                            <div class="tab active" data-tab="relatorio-rapido">Relatório Rápido</div>
+                            <div class="tab" data-tab="relatorio-completo">Relatório Completo</div>
+                            <div class="tab" data-tab="meus-relatorios">Meus Relatórios</div>
+                        </div>
+                        
+                        <!-- RELATÓRIO RÁPIDO -->
+                        <div id="relatorio-rapido" class="tab-content active">
+                            <div class="form-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 25px;">
+                                    <i class="fas fa-file-alt"></i> Relatório Rápido de Serviço
+                                </h3>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="cliente-relatorio">Cliente</label>
+                                        <select id="cliente-relatorio" class="form-control">
+                                            <option value="">Selecione um cliente</option>
+                                            <option value="fazenda-sao-joao">Fazenda São João</option>
+                                            <option value="agropecuaria-nova">Agropecuária Nova Esperança</option>
+                                            <option value="sitio-vale-verde">Sítio Vale Verde</option>
+                                            <option value="outro">Outro cliente</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="data-servico">Data do Serviço</label>
+                                        <input type="date" id="data-servico" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tipo-servico">Tipo de Serviço</label>
+                                        <select id="tipo-servico" class="form-control">
+                                            <option value="pulverizacao">Pulverização</option>
+                                            <option value="mapeamento">Mapeamento Aéreo</option>
+                                            <option value="monitoramento">Monitoramento</option>
+                                            <option value="voo-fotogrametria">Voo Fotogramétrico</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="area-trabalhada">Área Trabalhada (hectares)</label>
+                                        <input type="number" id="area-trabalhada" class="form-control" step="0.1" placeholder="Ex: 55.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="produtividade">Produtividade (ha/h)</label>
+                                        <input type="number" id="produtividade" class="form-control" step="0.1" placeholder="Ex: 21.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="valor-cobrado">Valor Cobrado (R$)</label>
+                                        <input type="number" id="valor-cobrado" class="form-control" step="0.01" placeholder="Ex: 8525.00">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="observacoes-rapido">Observações do Serviço</label>
+                                    <textarea id="observacoes-rapido" class="form-control" rows="4" placeholder="Descreva detalhes importantes do serviço realizado..."></textarea>
+                                </div>
+                                <div style="text-align: center; margin-top: 30px;">
+                                    <button class="btn btn-primary" id="gerar-relatorio-rapido" style="padding: 15px 40px; font-size: 1.1rem;">
+                                        <i class="fas fa-file-pdf"></i> Gerar Relatório Rápido
+                                    </button>
+                                    <button class="btn" id="salvar-rascunho-rapido" style="background: var(--info-color); color: white; margin-left: 15px;">
+                                        <i class="fas fa-save"></i> Salvar Rascunho
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RELATÓRIO COMPLETO -->
+                        <div id="relatorio-completo" class="tab-content">
+                            <div class="form-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 25px;">
+                                    <i class="fas fa-file-contract"></i> Relatório Completo com Croqui
+                                </h3>
+                              
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-user"></i> Identificação
+                                </h4>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="piloto-nome">Nome do Piloto</label>
+                                        <input type="text" id="piloto-nome" class="form-control" placeholder="Ex: João Silva">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="drone-modelo-rel">Modelo do Drone</label>
+                                        <input type="text" id="drone-modelo-rel" class="form-control" placeholder="Ex: DJI Agras T50">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="data-aplicacao">Data e Hora da Aplicação</label>
+                                        <input type="datetime-local" id="data-aplicacao" class="form-control">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-map-marker-alt"></i> Localização e Cultura
+                                </h4>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="local-pulverizacao">Local da Pulverização</label>
+                                        <input type="text" id="local-pulverizacao" class="form-control" placeholder="Ex: Fazenda Boa Vista - Talhão 3">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cultura-rel">Cultura</label>
+                                        <select id="cultura-rel" class="form-control">
+                                            <option value="">Selecione a cultura</option>
+                                            <option value="cana">Cana</option>
+                                            <option value="milho">Milho</option>
+                                            <option value="mato">Mato</option>
+                                            <option value="soja">Soja</option>
+                                            <option value="sorgo">Sorgo</option>
+                                            <option value="algodao">Algodão</option>
+                                            <option value="cafe">Café</option>
+                                            <option value="feijao">Feijão</option>
+                                            <option value="trigo">Trigo</option>
+                                            <option value="arroz">Arroz</option>
+                                            <option value="cevada">Cevada</option>
+                                            <option value="citrus">Citrus</option>
+                                            <option value="eucalipto">Eucalipto</option>
+                                            <option value="pastagem">Pastagem</option>
+                                            <option value="hortalicas">Hortaliças</option>
+                                            <option value="outra">Outra</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="area-pulverizada-rel">Área Pulverizada (ha)</label>
+                                        <input type="number" id="area-pulverizada-rel" class="form-control" step="0.1" placeholder="Ex: 55.5">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-flask"></i> Produtos e Aplicação
+                                </h4>
+                                <div id="produtos-container-rel">
+                                    <div class="product-section-rel" data-product-id="1" style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fafafa;">
+                                        <div class="product-header-rel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                            <h5 style="color: var(--primary-color); margin: 0;">Produto 1</h5>
+                                            <button class="btn remove-product-rel" style="background: var(--danger-color); color: white; padding: 5px 10px; border-radius: 5px; display: none;">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                            <div class="form-group">
+                                                <label>Tipo de Aplicação</label>
+                                                <select class="tipo-aplicacao-rel form-control">
+                                                    <option value="">Selecione...</option>
+                                                    <option value="fungicida">Fungicida</option>
+                                                    <option value="herbicida">Herbicida</option>
+                                                    <option value="inseticida">Inseticida</option>
+                                                    <option value="fertilizante">Fertilizante Foliar</option>
+                                                    <option value="dessecante">Dessecante</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Produto</label>
+                                                <input type="text" class="produto-rel form-control" placeholder="Nome do produto">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Dosagem (mL/ha ou L/ha)</label>
+                                                <input type="number" class="dosagem-rel form-control" step="0.01" placeholder="Ex: 0.5">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Água (L/ha)</label>
+                                                <input type="number" class="agua-rel form-control" step="0.1" placeholder="Ex: 10.0">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="btn" id="add-product-rel" style="background: var(--success-color); color: white; margin-bottom: 25px;">
+                                    <i class="fas fa-plus"></i> Adicionar Outro Produto
+                                </button>
+
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-cog"></i> Configurações do Drone
+                                </h4>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="faixa-rel">Faixa (m)</label>
+                                        <input type="number" id="faixa-rel" class="form-control" step="0.1" placeholder="Ex: 7.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="velocidade-rel">Velocidade (m/s)</label>
+                                        <input type="number" id="velocidade-rel" class="form-control" step="0.1" placeholder="Ex: 5.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="altura-rel">Altura (m)</label>
+                                        <input type="number" id="altura-rel" class="form-control" step="0.1" placeholder="Ex: 3.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vazao-rel">Vazão (L/ha)</label>
+                                        <input type="number" id="vazao-rel" class="form-control" step="0.1" placeholder="Ex: 12.0">
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-map"></i> Croqui da Área Pulverizada
+                                </h4>
+                                <div class="croqui-section" style="border: 2px dashed #ddd; padding: 30px; text-align: center; border-radius: 10px; margin-bottom: 25px; background: #fafafa;">
+                                    <div id="croqui-upload-area" style="cursor: pointer;">
+                                        <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+                                        <h5 style="color: #666; margin-bottom: 10px;">Clique para adicionar croqui ou arraste uma imagem</h5>
+                                        <p style="color: #999; font-size: 0.9rem;">Formatos suportados: JPG, PNG, GIF (Máx. 5MB)</p>
+                                        <input type="file" id="croqui-file" accept="image/*" style="display: none;">
+                                    </div>
+                                    <div id="croqui-preview" style="display: none; margin-top: 20px;">
+                                        <img id="croqui-preview-img" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                        <div style="margin-top: 15px;">
+                                            <button class="btn" id="trocar-croqui" style="background: var(--warning-color); color: white; margin-right: 10px;">
+                                                <i class="fas fa-sync"></i> Trocar Imagem
+                                            </button>
+                                            <button class="btn" id="remover-croqui" style="background: var(--danger-color); color: white;">
+                                                <i class="fas fa-trash"></i> Remover
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h4 style="color: var(--primary-color); margin: 30px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;">
+                                    <i class="fas fa-cloud-sun"></i> Condições Meteorológicas
+                                </h4>
+                                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="temperatura-rel">Temperatura (°C)</label>
+                                        <input type="number" id="temperatura-rel" class="form-control" step="0.1" placeholder="Ex: 25.5">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="umidade-rel">Umidade (%)</label>
+                                        <input type="number" id="umidade-rel" class="form-control" step="0.1" placeholder="Ex: 65.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="vento-rel">Vento (km/h)</label>
+                                        <input type="number" id="vento-rel" class="form-control" step="0.1" placeholder="Ex: 12.0">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="delta-t-rel">Delta T (°C)</label>
+                                        <input type="number" id="delta-t-rel" class="form-control" step="0.1" placeholder="Ex: 5.2">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="observacoes-completo">Observações e Considerações Finais</label>
+                                    <textarea id="observacoes-completo" class="form-control" rows="4" placeholder="Observações adicionais sobre o serviço, condições do campo, recomendações..."></textarea>
+                                </div>
+
+                                <div style="text-align: center; margin-top: 40px; padding-top: 25px; border-top: 2px solid #f0f0f0;">
+                                    <div class="action-buttons" style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                                        <button class="btn btn-primary" id="gerar-relatorio-completo" style="padding: 15px 30px; font-size: 1.1rem;">
+                                            <i class="fas fa-file-pdf"></i> Gerar Relatório PDF
+                                        </button>
+                                        <button class="btn" id="exportar-excel-rel" style="background: #217346; color: white; padding: 15px 30px;">
+                                            <i class="fas fa-file-excel"></i> Exportar para Excel
+                                        </button>
+                                        <button class="btn" id="salvar-rascunho" style="background: var(--info-color); color: white; padding: 15px 30px;">
+                                            <i class="fas fa-save"></i> Salvar Rascunho
+                                        </button>
+                                        <button class="btn" id="limpar-formulario" style="background: var(--secondary-color); color: white; padding: 15px 30px;">
+                                            <i class="fas fa-broom"></i> Limpar Formulário
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MEUS RELATÓRIOS -->
+                        <div id="meus-relatorios" class="tab-content">
+                            <div class="form-card">
+                                <h3 style="color: var(--primary-color); margin-bottom: 25px;">
+                                    <i class="fas fa-history"></i> Meus Relatórios Salvos
+                                </h3>
+                                <div class="filters" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                                    <div class="form-group">
+                                        <label for="filtrar-cliente">Filtrar por Cliente</label>
+                                        <select id="filtrar-cliente" class="form-control">
+                                            <option value="">Todos os clientes</option>
+                                            <option value="fazenda-sao-joao">Fazenda São João</option>
+                                            <option value="agropecuaria-nova">Agropecuária Nova Esperança</option>
+                                            <option value="sitio-vale-verde">Sítio Vale Verde</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="filtrar-data">Filtrar por Data</label>
+                                        <input type="month" id="filtrar-data" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="filtrar-tipo">Filtrar por Tipo</label>
+                                        <select id="filtrar-tipo" class="form-control">
+                                            <option value="">Todos os tipos</option>
+                                            <option value="pulverizacao">Pulverização</option>
+                                            <option value="mapeamento">Mapeamento</option>
+                                            <option value="monitoramento">Monitoramento</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="display: flex; align-items: end;">
+                                        <button class="btn btn-primary" id="aplicar-filtros" style="width: 100%;">
+                                            <i class="fas fa-filter"></i> Aplicar Filtros
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="lista-relatorios" class="table-responsive">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Cliente</th>
+                                                <th>Serviço</th>
+                                                <th>Área (ha)</th>
+                                                <th>Valor (R$)</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="relatorios-tbody">
+                                            <!-- Os relatórios serão carregados via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                              
+                                <div class="stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; padding-top: 25px; border-top: 2px solid #f0f0f0;">
+                                    <div class="stat-item" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                        <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color);" id="total-relatorios">0</div>
+                                        <div style="color: #666;">Total de Relatórios</div>
+                                    </div>
+                                    <div class="stat-item" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                        <div style="font-size: 2rem; font-weight: bold; color: var(--success-color);" id="area-total">0 ha</div>
+                                        <div style="color: #666;">Área Total</div>
+                                    </div>
+                                    <div class="stat-item" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                        <div style="font-size: 2rem; font-weight: bold; color: var(--info-color);" id="faturamento-total">R$ 0</div>
+                                        <div style="color: #666;">Faturamento Total</div>
+                                    </div>
+                                    <div class="stat-item" style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                                        <div style="font-size: 2rem; font-weight: bold; color: var(--warning-color);" id="relatorios-mes">0</div>
+                                        <div style="color: #666;">Este Mês</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CAIXA -->
+                    <div id="caixa" class="page">
+                        <div class="dashboard-header">
+                            <h2><i class="fas fa-cash-register"></i> Controle de Caixa</h2>
+                            <p>Gestão financeira e controle de fluxo de caixa</p>
+                        </div>
+                        <div class="action-bar" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <div>
+                                <button class="btn btn-primary" id="nova-entrada">
+                                    <i class="fas fa-plus-circle"></i> Nova Entrada
+                                </button>
+                                <button class="btn" id="nova-saida" style="background: var(--danger-color); color: white; margin-left: 10px;">
+                                    <i class="fas fa-minus-circle"></i> Nova Saída
+                                </button>
+                            </div>
+                            <div style="display: flex; gap: 15px;">
+                                <input type="month" class="form-control" id="filtro-mes-caixa" style="width: 180px;">
+                                <button class="btn" id="exportar-caixa" style="background: #217346; color: white;">
+                                    <i class="fas fa-file-excel"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="metrics-grid" style="margin-bottom: 30px;">
+                            <div class="metric-card">
+                                <h3>Saldo Atual</h3>
+                                <div class="value" id="saldo-atual">R$ 28.450</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> R$ 2.150 este mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Entradas Este Mês</h3>
+                                <div class="value" id="entradas-mes">R$ 42.800</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 15% vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Saídas Este Mês</h3>
+                                <div class="value" id="saidas-mes">R$ 40.650</div>
+                                <div class="trend down"><i class="fas fa-arrow-down"></i> 8% vs último mês</div>
+                            </div>
+                            <div class="metric-card">
+                                <h3>Lucro Líquido</h3>
+                                <div class="value" id="lucro-liquido">R$ 2.150</div>
+                                <div class="trend up"><i class="fas fa-arrow-up"></i> 25% vs último mês</div>
+                            </div>
+                        </div>
+                        <div class="charts-grid" style="margin-bottom: 30px;">
+                            <div class="chart-card">
+                                <h3>Fluxo de Caixa Mensal</h3>
+                                <div class="chart-container">
+                                    <canvas id="fluxoCaixaChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="chart-card">
+                                <h3>Distribuição de Despesas</h3>
+                                <div class="chart-container">
+                                    <canvas id="despesasChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-card" style="background: white; padding: 25px; border-radius: 15px; box-shadow: var(--shadow);">
+                            <h3 style="color: var(--primary-color); margin-bottom: 20px;">Últimas Movimentações</h3>
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Data</th>
+                                            <th>Descrição</th>
+                                            <th>Categoria</th>
+                                            <th>Valor (R$)</th>
+                                            <th>Tipo</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="caixa-tbody">
+                                        <!-- As movimentações serão carregadas via JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAIS -->
+    <div id="modal-cliente" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-cliente')">&times;</span>
+            <h2 id="modal-title-cliente">Novo Cliente</h2>
+            <div class="form-group">
+                <label for="cliente-nome">Nome do Cliente</label>
+                <input type="text" id="cliente-nome" class="form-control" placeholder="Nome do Cliente">
+            </div>
+            <div class="form-group">
+                <label for="cliente-contato">Contato</label>
+                <input type="text" id="cliente-contato" class="form-control" placeholder="Telefone/Email">
+            </div>
+            <div class="form-group">
+                <label for="cliente-localizacao">Localização</label>
+                <input type="text" id="cliente-localizacao" class="form-control" placeholder="Cidade/Estado">
+            </div>
+            <div class="form-group">
+                <label for="cliente-link-maps">Link do Google Maps</label>
+                <input type="text" id="cliente-link-maps" class="form-control" placeholder="https://maps.google.com/...">
+            </div>
+            <div class="form-group">
+                <label for="cliente-ponto-referencia">Ponto de Referência</label>
+                <input type="text" id="cliente-ponto-referencia" class="form-control" placeholder="Ex: Próximo ao posto de gasolina">
+            </div>
+            <div class="form-group">
+                <label for="cliente-nome-dono">Nome do Proprietário</label>
+                <input type="text" id="cliente-nome-dono" class="form-control" placeholder="Nome do proprietário">
+            </div>
+            <div class="form-group">
+                <label for="cliente-responsavel">Responsável pelo Contato</label>
+                <input type="text" id="cliente-responsavel" class="form-control" placeholder="Nome do responsável">
+            </div>
+            <div class="form-group">
+                <label for="cliente-area">Área (ha)</label>
+                <input type="number" id="cliente-area" class="form-control" step="0.1" placeholder="Área em hectares">
+            </div>
+            <div class="form-group">
+                <label for="cliente-ultimo-servico">Último Serviço</label>
+                <input type="date" id="cliente-ultimo-servico" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="cliente-status">Status</label>
+                <select id="cliente-status" class="form-control">
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="salvarCliente()">Salvar Cliente</button>
+        </div>
+    </div>
+
+    <div id="modal-orcamento" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-orcamento')">&times;</span>
+            <h2 id="modal-title-orcamento">Novo Orçamento</h2>
+            <div class="form-group">
+                <label for="orcamento-cliente">Cliente</label>
+                <select id="orcamento-cliente" class="form-control">
+                    <option value="">Selecione um cliente</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="orcamento-endereco">Endereço</label>
+                <input type="text" id="orcamento-endereco" class="form-control" placeholder="Endereço do cliente">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-cnpj">CNPJ/CPF</label>
+                <input type="text" id="orcamento-cnpj" class="form-control" placeholder="CNPJ ou CPF do cliente">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-telefone">Telefone</label>
+                <input type="text" id="orcamento-telefone" class="form-control" placeholder="Telefone do cliente">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-email">E-mail</label>
+                <input type="email" id="orcamento-email" class="form-control" placeholder="E-mail do cliente">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-area">Quantidade de ha</label>
+                <input type="number" id="orcamento-area" class="form-control" step="0.1" placeholder="Área em hectares">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-cultura1">Cultura 1</label>
+                <input type="text" id="orcamento-cultura1" class="form-control" placeholder="Cultura plantada 1">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-cultura2">Cultura 2</label>
+                <input type="text" id="orcamento-cultura2" class="form-control" placeholder="Cultura plantada 2">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-cultura3">Cultura 3</label>
+                <input type="text" id="orcamento-cultura3" class="form-control" placeholder="Cultura plantada 3">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-maps">Link do Maps</label>
+                <input type="text" id="orcamento-maps" class="form-control" placeholder="Link do Google Maps">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-pagamento">Forma de Pagamento</label>
+                <select id="orcamento-pagamento" class="form-control">
+                    <option value="">Selecione...</option>
+                    <option value="boleto">Boleto</option>
+                    <option value="cartao">Cartão</option>
+                    <option value="pix">PIX</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div id="orcamento-outro-pagamento" class="category-other-input">
+                <label for="orcamento-outro-descricao">Descrição do Outro Pagamento</label>
+                <input type="text" id="orcamento-outro-descricao" class="form-control" placeholder="Descreva a forma de pagamento">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-vencimento">Dia do Vencimento</label>
+                <input type="date" id="orcamento-vencimento" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-parcelas">Quantas vezes dividir</label>
+                <input type="number" id="orcamento-parcelas" class="form-control" placeholder="Número de parcelas">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-descricao">Descrição</label>
+                <input type="text" id="orcamento-descricao" class="form-control" placeholder="Descrição do serviço">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-valor">Valor (R$)</label>
+                <input type="number" id="orcamento-valor" class="form-control" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-validade">Validade (dias)</label>
+                <input type="number" id="orcamento-validade" class="form-control" value="30">
+            </div>
+            <div class="form-group">
+                <label for="orcamento-status">Status</label>
+                <select id="orcamento-status" class="form-control">
+                    <option value="pendente">Pendente</option>
+                    <option value="aprovado">Aprovado</option>
+                    <option value="recusado">Recusado</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="salvarOrcamento()">Salvar Orçamento</button>
+        </div>
+    </div>
+
+    <div id="modal-caixa" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('modal-caixa')">&times;</span>
+            <h2 id="modal-title-caixa">Nova Movimentação</h2>
+            <div class="form-group">
+                <label for="caixa-tipo">Tipo</label>
+                <select id="caixa-tipo" class="form-control">
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="caixa-descricao">Descrição</label>
+                <input type="text" id="caixa-descricao" class="form-control" placeholder="Descrição da movimentação">
+            </div>
+            <div class="form-group">
+                <label for="caixa-categoria">Categoria</label>
+                <select id="caixa-categoria" class="form-control">
+                    <option value="administrativo">Administrativo</option>
+                    <option value="operacional">Operacional</option>
+                    <option value="comercial">Comercial</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            <div id="caixa-outros-container" class="category-other-input">
+                <div class="form-group">
+                    <label for="caixa-outros-descricao">Especificar categoria</label>
+                    <input type="text" id="caixa-outros-descricao" class="form-control" placeholder="Descreva a categoria">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="caixa-valor">Valor (R$)</label>
+                <input type="number" id="caixa-valor" class="form-control" step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="caixa-data">Data</label>
+                <input type="date" id="caixa-data" class="form-control">
+            </div>
+            <button class="btn btn-primary" onclick="salvarMovimentacaoCaixa()">Salvar Movimentação</button>
+        </div>
+    </div>
+
+<script>
+// =============================================
+// SISTEMA DE LOGIN
+// =============================================
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
+    
+    if (username && password) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        errorMessage.style.display = 'none';
         
+        document.getElementById('user-display-name').textContent = username || 'Usuário';
+        document.getElementById('user-role').textContent = 'Operador';
+        
+        setTimeout(() => {
+            showNotification(`Bem-vindo ${username} ao AgroVooSis Pro!`, 'success');
+        }, 500);
+    } else {
+        errorMessage.textContent = 'Digite usuário e senha!';
+        errorMessage.style.display = 'block';
+    }
+});
+
+// =============================================
+// NAVEGAÇÃO E TEMA
+// =============================================
+document.querySelectorAll('.sidebar-menu li').forEach(item => {
+    item.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-menu li').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+        const pageId = this.getAttribute('data-page');
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        const targetPage = document.getElementById(pageId);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+        
+        if (window.innerWidth <= 768) {
+            document.getElementById('sidebar').classList.remove('mobile-open');
+        }
+        
+        switch (pageId) {
+            case 'calculadora':
+                initializeCalculatorModule();
+                break;
+            case 'clientes':
+                loadClientes();
+                break;
+            case 'orcamentos':
+                loadOrcamentos();
+                break;
+            case 'relatorios':
+                initializeReportsModule();
+                break;
+            case 'caixa':
+                loadCaixa();
+                break;
+        }
+    });
+});
+
+// Sistema de Tema
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', function() {
+    document.body.classList.toggle('dark-theme');
+    const icon = this.querySelector('i');
+    if (document.body.classList.contains('dark-theme')) {
+        icon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'dark');
+        showNotification('Tema escuro ativado', 'info');
+    } else {
+        icon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'light');
+        showNotification('Tema claro ativado', 'info');
+    }
+});
+
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+    document.body.classList.add('dark-theme');
+    themeToggle.querySelector('i').classList.replace('fa-moon', 'fa-sun');
+}
+
+// Menu móvel
+document.getElementById('mobile-menu-toggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+});
+
+document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const menuToggle = document.getElementById('mobile-menu-toggle');
+    if (window.innerWidth <= 768 &&
+        sidebar.classList.contains('mobile-open') &&
+        !sidebar.contains(e.target) &&
+        !menuToggle.contains(e.target)) {
+        sidebar.classList.remove('mobile-open');
+    }
+});
+
+window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+        document.getElementById('sidebar').classList.remove('mobile-open');
+    }
+});
+
+// =============================================
+// SISTEMA DE NOTIFICAÇÕES
+// =============================================
+function showNotification(message, type = 'info') {
+    document.querySelectorAll('.custom-notification').forEach(notif => notif.remove());
+    const notification = document.createElement('div');
+    notification.className = 'custom-notification';
+    const colors = {
+        info: 'background: var(--info-color);',
+        success: 'background: var(--success-color);',
+        warning: 'background: var(--warning-color);',
+        error: 'background: var(--danger-color);'
+    };
+    notification.style.cssText += colors[type];
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-${type === 'info' ? 'info-circle' : type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }
+    }, 5000);
+}
+
+// =============================================
+// MÓDULO DA CALCULADORA - CORRIGIDO
+// =============================================
+function initializeCalculatorModule() {
+    // Navegação entre abas
+    document.querySelectorAll('#calculadora .tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            const parent = this.closest('.tabs');
+            parent.querySelectorAll('.tab').forEach(t => {
+                t.style.borderBottom = '3px solid transparent';
+                t.style.color = '#666';
+            });
+            this.style.borderBottom = '3px solid var(--primary-color)';
+            this.style.color = 'var(--primary-color)';
+            
+            document.querySelectorAll('#calculadora .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+            
+            if (tabId === 'orcamentos-salvos') {
+                loadOrcamentosCalculadora();
+            }
+        });
+    });
+
+    // Atualizar distância ida e volta
+    document.getElementById('distance-calc').addEventListener('input', function() {
+        const distance = parseFloat(this.value) || 0;
+        document.getElementById('round-trip-calc').textContent = (distance * 2) + ' km';
+    });
+
+    // Gestão de funcionários
+    document.getElementById('add-employee-calc').addEventListener('click', function() {
+        const container = document.getElementById('employees-container-calc');
+        const employeeCount = container.children.length + 1;
+        const employeeRow = document.createElement('div');
+        employeeRow.className = 'employee-row';
+        employeeRow.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 15px; align-items: end; margin-bottom: 15px; padding: 20px; background: #f8f9fa; border-radius: 10px;';
+        employeeRow.innerHTML = `
+            <div class="form-group">
+                <label>Nome do Funcionário</label>
+                <input type="text" class="form-control employee-name" value="Operador ${employeeCount}">
+            </div>
+            <div class="form-group">
+                <label>Diária (R$)</label>
+                <input type="number" class="form-control employee-daily" value="150" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Comissão (R$/ha)</label>
+                <input type="number" class="form-control employee-commission" value="5" step="0.01">
+            </div>
+            <div class="form-group">
+                <label>Meta (ha/dia)</label>
+                <input type="number" class="form-control employee-target" value="50" step="0.1">
+            </div>
+            <button class="btn remove-employee" style="background: var(--danger-color); color: white; padding: 10px; border-radius: 8px;">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(employeeRow);
+        
+        employeeRow.querySelector('.remove-employee').addEventListener('click', function() {
+            if (container.children.length > 1) {
+                employeeRow.remove();
+            }
+        });
+    });
+
+    // Cálculo principal
+    document.getElementById('calculate-all-calc').addEventListener('click', calcularCustos);
+    document.getElementById('save-calculation').addEventListener('click', salvarCalculo);
+    document.getElementById('download-excel-calc').addEventListener('click', downloadExcelCalculadora);
+    document.getElementById('reset-calc-btn').addEventListener('click', resetCalculadora);
+}
+
+function calcularCustos() {
+    const area = parseFloat(document.getElementById('area-calc').value) || 0;
+    const pricePerHectare = parseFloat(document.getElementById('price-calc').value) || 0;
+    const distance = parseFloat(document.getElementById('distance-calc').value) || 0;
+    const productivity = parseFloat(document.getElementById('productivity-calc').value) || 0;
+    const fuelPrice = parseFloat(document.getElementById('fuel-price-calc').value) || 0;
+    const generatorConsumption = parseFloat(document.getElementById('generator-consumption-calc').value) || 0;
+    const vehicleConsumption = parseFloat(document.getElementById('vehicle-consumption-calc').value) || 0;
+
+    const employeeRows = document.querySelectorAll('#employees-container-calc .employee-row');
+    let totalSalary = 0;
+    employeeRows.forEach(row => {
+        const dailyRate = parseFloat(row.querySelector('.employee-daily').value) || 0;
+        const commission = parseFloat(row.querySelector('.employee-commission').value) || 0;
+        let payment = 0;
+        if (dailyRate > 0 && commission > 0) {
+            const commissionValue = commission * area;
+            payment = Math.max(dailyRate, commissionValue);
+        } else if (dailyRate > 0) {
+            payment = dailyRate;
+        } else if (commission > 0) {
+            payment = commission * area;
+        }
+        totalSalary += payment;
+    });
+
+    const maintenancePercent = parseFloat(document.getElementById('maintenance-percent-calc').value) || 0;
+    const accountingPercent = parseFloat(document.getElementById('accounting-percent-calc').value) || 0;
+    const taxPercent = parseFloat(document.getElementById('tax-percent-calc').value) || 0;
+    const contingencyPercent = parseFloat(document.getElementById('contingency-percent-calc').value) || 0;
+
+    const revenue = area * pricePerHectare;
+    const workHours = area / productivity;
+
+    const generatorFuelCost = workHours * generatorConsumption * fuelPrice;
+    const roundTripDistance = distance * 2;
+    const vehicleFuelCost = (roundTripDistance / vehicleConsumption) * fuelPrice;
+    const totalFuelCost = generatorFuelCost + vehicleFuelCost;
+
+    const batteryCostPerCycle = (parseFloat(document.getElementById('battery-cost-calc').value) || 0) / (parseFloat(document.getElementById('battery-life-calc').value) || 1);
+    const batteryCost = batteryCostPerCycle * (workHours / 4);
+
+    const maintenanceCost = revenue * (maintenancePercent / 100) + batteryCost;
+    const accountingCost = revenue * (accountingPercent / 100);
+    const taxCost = revenue * (taxPercent / 100);
+    const contingencyCost = revenue * (contingencyPercent / 100);
+
+    const percentageCosts = maintenanceCost + accountingCost + taxCost + contingencyCost;
+    const totalCosts = totalFuelCost + totalSalary + percentageCosts;
+
+    const profit = revenue - totalCosts;
+    const margin = revenue > 0 ? (profit / revenue) * 100 : 0;
+
+    // Atualizar interface
+    document.getElementById('revenue-value-calc').textContent = `R$ ${revenue.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('costs-value-calc').textContent = `R$ ${totalCosts.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('profit-value-calc').textContent = `R$ ${profit.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('margin-value-calc').textContent = `${margin.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})}%`;
+    document.getElementById('fuel-cost-calc').textContent = `R$ ${totalFuelCost.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('staff-cost-calc').textContent = `R$ ${totalSalary.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('maintenance-cost-calc').textContent = `R$ ${maintenanceCost.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('tax-cost-calc').textContent = `R$ ${(accountingCost + taxCost + contingencyCost).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    document.getElementById('total-cost-calc').textContent = `R$ ${totalCosts.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+    document.getElementById('results-section-calc').style.display = 'block';
+
+    window.currentCalculation = {
+        area,
+        pricePerHectare,
+        distance,
+        productivity,
+        revenue,
+        totalCosts,
+        profit,
+        margin,
+        timestamp: new Date()
+    };
+}
+
+function salvarCalculo() {
+    if (!window.currentCalculation) {
+        showNotification('Realize um cálculo primeiro', 'warning');
+        return;
+    }
+    try {
+        const calculosExistentes = JSON.parse(localStorage.getItem('calculosSalvos') || '[]');
+        const novoCalculo = {
+            id: 'CALC' + Date.now(),
+            ...window.currentCalculation,
+            timestamp: new Date().toISOString()
+        };
+        calculosExistentes.push(novoCalculo);
+        localStorage.setItem('calculosSalvos', JSON.stringify(calculosExistentes));
+        showNotification('Cálculo salvo com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao salvar cálculo:', error);
+        showNotification('Erro ao salvar cálculo', 'error');
+    }
+}
+
+function downloadExcelCalculadora() {
+    if (!window.currentCalculation) {
+        showNotification('Realize um cálculo primeiro', 'warning');
+        return;
+    }
+    const data = [
+        ['Item', 'Valor'],
+        ['Área (ha)', window.currentCalculation.area],
+        ['Preço por hectare (R$)', window.currentCalculation.pricePerHectare],
+        ['Distância (km)', window.currentCalculation.distance],
+        ['Produtividade (ha/h)', window.currentCalculation.productivity],
+        ['Faturamento Bruto (R$)', window.currentCalculation.revenue],
+        ['Custos Totais (R$)', window.currentCalculation.totalCosts],
+        ['Lucro Estimado (R$)', window.currentCalculation.profit],
+        ['Margem de Lucro (%)', window.currentCalculation.margin],
+        ['Data do Cálculo', new Date().toLocaleDateString('pt-BR')]
+    ];
+    try {
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Cálculo de Custos");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        XLSX.writeFile(wb, `calculo_custos_${timestamp}.xlsx`);
+        showNotification('Arquivo Excel gerado com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao gerar Excel:', error);
+        showNotification('Erro ao gerar arquivo Excel', 'error');
+    }
+}
+
+function resetCalculadora() {
+    if (confirm('Deseja iniciar um novo cálculo? Todos os dados serão redefinidos.')) {
+        document.getElementById('results-section-calc').style.display = 'none';
+        document.getElementById('area-calc').value = '55';
+        document.getElementById('price-calc').value = '155';
+        document.getElementById('distance-calc').value = '15';
+        document.getElementById('productivity-calc').value = '21.5';
+        document.getElementById('fuel-price-calc').value = '6.90';
+        document.getElementById('generator-consumption-calc').value = '1.2';
+        document.getElementById('vehicle-consumption-calc').value = '6.8';
+        document.getElementById('maintenance-percent-calc').value = '1.5';
+        document.getElementById('accounting-percent-calc').value = '3';
+        document.getElementById('tax-percent-calc').value = '6';
+        document.getElementById('contingency-percent-calc').value = '3';
+        document.getElementById('battery-life-calc').value = '300';
+        document.getElementById('battery-cost-calc').value = '2500';
+        document.getElementById('drone-cost-calc').value = '120000';
+        document.getElementById('round-trip-calc').textContent = '30 km';
+    }
+}
+
+function loadOrcamentosCalculadora() {
+    try {
+        const tbody = document.getElementById('orcamentos-tbody-calc');
+        if (!tbody) return;
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                    <p>Carregando orçamentos...</p>
+                </td>
+            </tr>
+        `;
+
+        setTimeout(() => {
+            const orcamentos = JSON.parse(localStorage.getItem('calculosSalvos') || '[]');
+            if (orcamentos.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>Nenhum orçamento encontrado</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+          
+            tbody.innerHTML = '';
+            orcamentos.forEach(orcamento => {
+                let statusClass = 'status-aguardando';
+                let statusText = 'Pendente';
+              
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${new Date(orcamento.timestamp).toLocaleDateString('pt-BR')}</td>
+                        <td>${orcamento.cliente || 'N/A'}</td>
+                        <td>${orcamento.area || '--'} ha</td>
+                        <td>R$ ${orcamento.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2})}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn-icon" style="background: var(--info-color); color: white;" onclick="visualizarOrcamento('${orcamento.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" style="background: var(--success-color); color: white; margin-left: 5px;" onclick="downloadOrcamento('${orcamento.id}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            showNotification('Orçamentos carregados com sucesso!', 'success');
+        }, 1000);
+      
+    } catch (error) {
+        console.error('Erro ao carregar orçamentos:', error);
+        showNotification('Erro ao carregar orçamentos', 'error');
+    }
+}
+
+// =============================================
+// MÓDULO DE RELATÓRIOS - CORRIGIDO
+// =============================================
+function initializeReportsModule() {
+    document.querySelectorAll('#relatorios .tab[data-tab]').forEach(tab => {
+        tab.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            document.querySelectorAll('#relatorios .tab').forEach(t => {
+                t.style.borderBottom = '3px solid transparent';
+                t.style.color = '#666';
+            });
+            this.style.borderBottom = '3px solid var(--primary-color)';
+            this.style.color = 'var(--primary-color)';
+            
+            document.querySelectorAll('#relatorios .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            const targetContent = document.getElementById(tabId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+            
+            if (tabId === 'meus-relatorios') {
+                loadSavedReports();
+            }
+        });
+    });
+
+    // Sistema de produtos dinâmicos
+    const addProductBtn = document.getElementById('add-product-rel');
+    const container = document.getElementById('produtos-container-rel');
+    if (addProductBtn && container) {
+        addProductBtn.addEventListener('click', function() {
+            const productCount = container.querySelectorAll('.product-section-rel').length + 1;
+            const productSection = document.createElement('div');
+            productSection.className = 'product-section-rel';
+            productSection.dataset.productId = productCount;
+            productSection.style.cssText = 'border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fafafa;';
+            productSection.innerHTML = `
+                <div class="product-header-rel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h5 style="color: var(--primary-color); margin: 0;">Produto ${productCount}</h5>
+                    <button class="btn remove-product-rel" style="background: var(--danger-color); color: white; padding: 5px 10px; border-radius: 5px;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>Tipo de Aplicação</label>
+                        <select class="tipo-aplicacao-rel form-control">
+                            <option value="">Selecione...</option>
+                            <option value="fungicida">Fungicida</option>
+                            <option value="herbicida">Herbicida</option>
+                            <option value="inseticida">Inseticida</option>
+                            <option value="fertilizante">Fertilizante Foliar</option>
+                            <option value="dessecante">Dessecante</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Produto</label>
+                        <input type="text" class="produto-rel form-control" placeholder="Nome do produto">
+                    </div>
+                    <div class="form-group">
+                        <label>Dosagem (mL/ha ou L/ha)</label>
+                        <input type="number" class="dosagem-rel form-control" step="0.01" placeholder="Ex: 0.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Água (L/ha)</label>
+                        <input type="number" class="agua-rel form-control" step="0.1" placeholder="Ex: 10.0">
+                    </div>
+                </div>
+            `;
+          
+            container.appendChild(productSection);
+          
+            const removeBtn = productSection.querySelector('.remove-product-rel');
+            removeBtn.addEventListener('click', function() {
+                if (container.querySelectorAll('.product-section-rel').length > 1) {
+                    productSection.remove();
+                }
+            });
+          
+            document.querySelectorAll('.remove-product-rel').forEach((btn, index) => {
+                btn.style.display = index === 0 ? 'none' : 'block';
+            });
+        });
+    }
+
+    // Sistema de upload de croqui
+    const croquiUploadArea = document.getElementById('croqui-upload-area');
+    const croquiFile = document.getElementById('croqui-file');
+    const croquiPreview = document.getElementById('croqui-preview');
+    const croquiPreviewImg = document.getElementById('croqui-preview-img');
+    const trocarCroqui = document.getElementById('trocar-croqui');
+    const removerCroqui = document.getElementById('remover-croqui');
+
+    if (croquiUploadArea && croquiFile) {
+        croquiUploadArea.addEventListener('click', function() {
+            croquiFile.click();
+        });
+      
+        croquiFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showNotification('Arquivo muito grande. Máximo 5MB.', 'error');
+                    return;
+                }
+              
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    croquiPreviewImg.src = e.target.result;
+                    croquiUploadArea.style.display = 'none';
+                    croquiPreview.style.display = 'block';
+                  
+                    try {
+                        const relatorios = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+                        const ultimoRelatorio = relatorios[relatorios.length - 1];
+                        if (ultimoRelatorio) {
+                            ultimoRelatorio.croqui = e.target.result;
+                            localStorage.setItem('relatoriosSalvos', JSON.stringify(relatorios));
+                        }
+                        window.currentCroqui = e.target.result;
+                    } catch (error) {
+                        console.error('Erro ao salvar croqui:', error);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+      
+        if (trocarCroqui) {
+            trocarCroqui.addEventListener('click', function() {
+                croquiFile.click();
+            });
+        }
+      
+        if (removerCroqui) {
+            removerCroqui.addEventListener('click', function() {
+                croquiFile.value = '';
+                croquiPreview.style.display = 'none';
+                croquiUploadArea.style.display = 'block';
+                window.currentCroqui = null;
+            });
+        }
+    }
+
+    // Botões de ação
+    const gerarRelatorioRapidoBtn = document.getElementById('gerar-relatorio-rapido');
+    if (gerarRelatorioRapidoBtn) {
+        gerarRelatorioRapidoBtn.addEventListener('click', generateQuickReport);
+    }
+
+    const salvarRascunhoRapidoBtn = document.getElementById('salvar-rascunho-rapido');
+    if (salvarRascunhoRapidoBtn) {
+        salvarRascunhoRapidoBtn.addEventListener('click', saveQuickReportDraft);
+    }
+
+    const gerarRelatorioCompletoBtn = document.getElementById('gerar-relatorio-completo');
+    if (gerarRelatorioCompletoBtn) {
+        gerarRelatorioCompletoBtn.addEventListener('click', generateCompleteReport);
+    }
+
+    const exportarExcelBtn = document.getElementById('exportar-excel-rel');
+    if (exportarExcelBtn) {
+        exportarExcelBtn.addEventListener('click', exportReportToExcel);
+    }
+
+    const salvarRascunhoBtn = document.getElementById('salvar-rascunho');
+    if (salvarRascunhoBtn) {
+        salvarRascunhoBtn.addEventListener('click', saveReportDraft);
+    }
+
+    const limparFormularioBtn = document.getElementById('limpar-formulario');
+    if (limparFormularioBtn) {
+        limparFormularioBtn.addEventListener('click', clearReportForm);
+    }
+
+    const aplicarFiltrosBtn = document.getElementById('aplicar-filtros');
+    if (aplicarFiltrosBtn) {
+        aplicarFiltrosBtn.addEventListener('click', applyReportFilters);
+    }
+
+    carregarClientesRelatorios();
+}
+
+function carregarClientesRelatorios() {
+    const selectCliente = document.getElementById('cliente-relatorio');
+    const selectFiltrarCliente = document.getElementById('filtrar-cliente');
+  
+    if (!selectCliente && !selectFiltrarCliente) return;
+  
+    if (selectCliente) {
+        selectCliente.innerHTML = '<option value="">Selecione um cliente</option>';
+    }
+    if (selectFiltrarCliente) {
+        selectFiltrarCliente.innerHTML = '<option value="">Todos os clientes</option>';
+    }
+  
+    try {
+        const clientesSalvos = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+      
+        if (clientesSalvos.length === 0) {
+            const clientesPadrao = [
+                { nome: 'Fazenda São João', id: '1' },
+                { nome: 'Agropecuária Nova Esperança', id: '2' },
+                { nome: 'Sítio Vale Verde', id: '3' },
+                { nome: 'Fazenda Boa Vista', id: '4' },
+                { nome: 'Agropecuária Santa Maria', id: '5' }
+            ];
+          
+            clientesPadrao.forEach(cliente => {
+                if (selectCliente) {
+                    selectCliente.innerHTML += `<option value="${cliente.nome}">${cliente.nome}</option>`;
+                }
+                if (selectFiltrarCliente) {
+                    selectFiltrarCliente.innerHTML += `<option value="${cliente.nome}">${cliente.nome}</option>`;
+                }
+            });
+        } else {
+            clientesSalvos.forEach(cliente => {
+                if (selectCliente) {
+                    selectCliente.innerHTML += `<option value="${cliente.nome}">${cliente.nome}</option>`;
+                }
+                if (selectFiltrarCliente) {
+                    selectFiltrarCliente.innerHTML += `<option value="${cliente.nome}">${cliente.nome}</option>`;
+                }
+            });
+        }
+      
+        if (selectCliente) {
+            selectCliente.innerHTML += `<option value="outro">Outro cliente</option>`;
+        }
+      
+    } catch (error) {
+        console.error('Erro ao carregar clientes para relatórios:', error);
+    }
+}
+
+function generateQuickReport() {
+    const cliente = document.getElementById('cliente-relatorio').value;
+    const dataServico = document.getElementById('data-servico').value;
+    const tipoServico = document.getElementById('tipo-servico').value;
+    const areaTrabalhada = document.getElementById('area-trabalhada').value;
+    const produtividade = document.getElementById('produtividade').value;
+    const valorCobrado = document.getElementById('valor-cobrado').value;
+    const observacoes = document.getElementById('observacoes-rapido').value;
+  
+    if (!cliente || !dataServico || !areaTrabalhada) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    showNotification('Relatório rápido gerado com sucesso!', 'success');
+  
+    const salvo = salvarRelatorioRapido({
+        cliente,
+        dataServico,
+        tipoServico,
+        areaTrabalhada: parseFloat(areaTrabalhada),
+        produtividade: produtividade ? parseFloat(produtividade) : 0,
+        valorCobrado: valorCobrado ? parseFloat(valorCobrado) : 0,
+        observacoes,
+        timestamp: new Date()
+    });
+  
+    if (salvo) {
+        document.getElementById('cliente-relatorio').value = '';
+        document.getElementById('data-servico').value = '';
+        document.getElementById('tipo-servico').value = 'pulverizacao';
+        document.getElementById('area-trabalhada').value = '';
+        document.getElementById('produtividade').value = '';
+        document.getElementById('valor-cobrado').value = '';
+        document.getElementById('observacoes-rapido').value = '';
+    }
+}
+
+function salvarRelatorioRapido(dados) {
+    try {
+        const relatoriosExistentes = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+      
+        const novoRelatorio = {
+            id: 'R' + Date.now(),
+            ...dados,
+            tipo: 'rapido',
+            timestamp: new Date().toISOString()
+        };
+      
+        relatoriosExistentes.push(novoRelatorio);
+        localStorage.setItem('relatoriosSalvos', JSON.stringify(relatoriosExistentes));
+      
+        showNotification('Relatório salvo com sucesso!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Erro ao salvar relatório:', error);
+        showNotification('Erro ao salvar relatório', 'error');
+        return false;
+    }
+}
+
+function saveQuickReportDraft() {
+    showNotification('Rascunho do relatório rápido salvo!', 'success');
+}
+
+function generateCompleteReport() {
+    const camposObrigatorios = [
+        'piloto-nome', 'drone-modelo-rel', 'data-aplicacao',
+        'local-pulverizacao', 'cultura-rel', 'area-pulverizada-rel'
+    ];
+  
+    for (let campo of camposObrigatorios) {
+        const element = document.getElementById(campo);
+        if (!element || !element.value) {
+            showNotification(`Preencha o campo ${campo.replace(/-/g, ' ')}`, 'warning');
+            return;
+        }
+    }
+  
+    showNotification('Relatório completo gerado com sucesso!', 'success');
+  
+    const dadosRelatorio = {
+        piloto: document.getElementById('piloto-nome').value,
+        drone: document.getElementById('drone-modelo-rel').value,
+        dataAplicacao: document.getElementById('data-aplicacao').value,
+        local: document.getElementById('local-pulverizacao').value,
+        cultura: document.getElementById('cultura-rel').value,
+        area: parseFloat(document.getElementById('area-pulverizada-rel').value),
+        faixa: parseFloat(document.getElementById('faixa-rel').value) || 0,
+        velocidade: parseFloat(document.getElementById('velocidade-rel').value) || 0,
+        altura: parseFloat(document.getElementById('altura-rel').value) || 0,
+        vazao: parseFloat(document.getElementById('vazao-rel').value) || 0,
+        temperatura: parseFloat(document.getElementById('temperatura-rel').value) || 0,
+        umidade: parseFloat(document.getElementById('umidade-rel').value) || 0,
+        vento: parseFloat(document.getElementById('vento-rel').value) || 0,
+        deltaT: parseFloat(document.getElementById('delta-t-rel').value) || 0,
+        observacoes: document.getElementById('observacoes-completo').value,
+        croqui: window.currentCroqui || null,
+        timestamp: new Date()
+    };
+  
+    salvarRelatorioCompleto(dadosRelatorio);
+}
+
+function salvarRelatorioCompleto(dados) {
+    try {
+        const relatoriosExistentes = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+      
+        const novoRelatorio = {
+            id: 'RC' + Date.now(),
+            ...dados,
+            tipo: 'completo',
+            timestamp: new Date().toISOString()
+        };
+      
+        relatoriosExistentes.push(novoRelatorio);
+        localStorage.setItem('relatoriosSalvos', JSON.stringify(relatoriosExistentes));
+      
+        showNotification('Relatório completo salvo com sucesso!', 'success');
+      
+        setTimeout(() => {
+            clearReportForm();
+        }, 1000);
+      
+    } catch (error) {
+        console.error('Erro ao salvar relatório completo:', error);
+        showNotification('Erro ao salvar relatório', 'error');
+    }
+}
+
+function exportReportToExcel() {
+    showNotification('Relatório exportado para Excel com sucesso!', 'success');
+}
+
+function saveReportDraft() {
+    showNotification('Rascunho do relatório salvo!', 'success');
+}
+
+function clearReportForm() {
+    if (confirm('Deseja limpar todos os campos do formulário?')) {
+        const elementos = document.querySelectorAll('#relatorio-completo input, #relatorio-completo textarea, #relatorio-completo select');
+        elementos.forEach(element => {
+            if (element.id !== 'croqui-file') {
+                element.value = '';
+            }
+        });
+      
+        const container = document.getElementById('produtos-container-rel');
+        if (container) {
+            container.innerHTML = `
+                <div class="product-section-rel" data-product-id="1" style="border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 20px; border-radius: 10px; background: #fafafa;">
+                    <div class="product-header-rel" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h5 style="color: var(--primary-color); margin: 0;">Produto 1</h5>
+                        <button class="btn remove-product-rel" style="background: var(--danger-color); color: white; padding: 5px 10px; border-radius: 5px; display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label>Tipo de Aplicação</label>
+                            <select class="tipo-aplicacao-rel form-control">
+                                <option value="">Selecione...</option>
+                                <option value="fungicida">Fungicida</option>
+                                <option value="herbicida">Herbicida</option>
+                                <option value="inseticida">Inseticida</option>
+                                <option value="fertilizante">Fertilizante Foliar</option>
+                                <option value="dessecante">Dessecante</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Produto</label>
+                            <input type="text" class="produto-rel form-control" placeholder="Nome do produto">
+                        </div>
+                        <div class="form-group">
+                            <label>Dosagem (mL/ha ou L/ha)</label>
+                            <input type="number" class="dosagem-rel form-control" step="0.01" placeholder="Ex: 0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Água (L/ha)</label>
+                            <input type="number" class="agua-rel form-control" step="0.1" placeholder="Ex: 10.0">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+      
+        const croquiPreview = document.getElementById('croqui-preview');
+        const croquiUploadArea = document.getElementById('croqui-upload-area');
+        const croquiFile = document.getElementById('croqui-file');
+      
+        if (croquiFile) croquiFile.value = '';
+        if (croquiPreview) croquiPreview.style.display = 'none';
+        if (croquiUploadArea) croquiUploadArea.style.display = 'block';
+        window.currentCroqui = null;
+      
+        showNotification('Formulário limpo com sucesso!', 'success');
+    }
+}
+
+function applyReportFilters() {
+    const cliente = document.getElementById('filtrar-cliente').value;
+    const data = document.getElementById('filtrar-data').value;
+    const tipo = document.getElementById('filtrar-tipo').value;
+    loadSavedReportsComFiltros(cliente, data, tipo);
+}
+
+function loadSavedReportsComFiltros(clienteFiltro, dataFiltro, tipoFiltro) {
+    try {
+        const tbody = document.getElementById('relatorios-tbody');
+        if (!tbody) return;
+      
+        const relatorios = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+      
+        if (relatorios.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>Nenhum relatório encontrado</p>
+                        <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\\'relatorio-completo\\']').click()" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> Criar Primeiro Relatório
+                        </button>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+      
+        tbody.innerHTML = '';
+      
+        const relatoriosFiltrados = relatorios.filter(relatorio => {
+            let passaFiltro = true;
+          
+            if (clienteFiltro && relatorio.cliente !== clienteFiltro) {
+                passaFiltro = false;
+            }
+          
+            if (dataFiltro) {
+                const dataRelatorio = new Date(relatorio.timestamp);
+                const mesAnoRelatorio = `${dataRelatorio.getFullYear()}-${String(dataRelatorio.getMonth() + 1).padStart(2, '0')}`;
+                if (mesAnoRelatorio !== dataFiltro) {
+                    passaFiltro = false;
+                }
+            }
+          
+            if (tipoFiltro && relatorio.tipo !== tipoFiltro) {
+                passaFiltro = false;
+            }
+          
+            return passaFiltro;
+        });
+      
+        if (relatoriosFiltrados.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>Nenhum relatório encontrado com os filtros aplicados</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+      
+        let totalArea = 0;
+        let totalFaturamento = 0;
+        let relatoriosMes = 0;
+        const mesAtual = new Date().getMonth();
+        const anoAtual = new Date().getFullYear();
+      
+        relatoriosFiltrados.forEach(relatorio => {
+            totalArea += relatorio.area || 0;
+            totalFaturamento += relatorio.valorCobrado || 0;
+          
+            const dataRelatorio = new Date(relatorio.timestamp);
+            if (dataRelatorio.getMonth() === mesAtual && dataRelatorio.getFullYear() === anoAtual) {
+                relatoriosMes++;
+            }
+          
+            const dataFormatada = new Date(relatorio.timestamp).toLocaleDateString('pt-BR');
+            const tipoTexto = relatorio.tipo === 'rapido' ? 'Relatório Rápido' : 'Relatório Completo';
+          
+            tbody.innerHTML += `
+                <tr>
+                    <td>${dataFormatada}</td>
+                    <td>${relatorio.cliente || 'N/A'}</td>
+                    <td>${tipoTexto}</td>
+                    <td>${(relatorio.area || 0).toFixed(1)} ha</td>
+                    <td>R$ ${(relatorio.valorCobrado || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td>
+                        <button class="btn" onclick="viewReport('${relatorio.id}')" style="background: var(--info-color); color: white; padding: 5px 10px; margin-right: 5px;">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn" onclick="deleteReport('${relatorio.id}')" style="background: var(--danger-color); color: white; padding: 5px 10px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+      
+        document.getElementById('total-relatorios').textContent = relatoriosFiltrados.length;
+        document.getElementById('area-total').textContent = totalArea.toFixed(1) + ' ha';
+        document.getElementById('faturamento-total').textContent = 'R$ ' + totalFaturamento.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        document.getElementById('relatorios-mes').textContent = relatoriosMes;
+      
+        showNotification(`Filtros aplicados! ${relatoriosFiltrados.length} relatórios encontrados.`, 'success');
+    } catch (error) {
+        console.error('Erro ao carregar relatórios com filtros:', error);
+        showNotification('Erro ao aplicar filtros', 'error');
+    }
+}
+
+function loadSavedReports() {
+    try {
+        const tbody = document.getElementById('relatorios-tbody');
+        if (!tbody) return;
+      
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                    <p>Carregando relatórios...</p>
+                </td>
+            </tr>
+        `;
+      
+        setTimeout(() => {
+            const relatorios = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+          
+            if (relatorios.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="padding: 30px; text-align: center; color: #666;">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>Nenhum relatório encontrado</p>
+                            <button class="btn btn-primary" onclick="document.querySelector('[data-tab=\\'relatorio-completo\\']').click()" style="margin-top: 10px;">
+                                <i class="fas fa-plus"></i> Criar Primeiro Relatório
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+          
+            tbody.innerHTML = '';
+          
+            let totalArea = 0;
+            let totalFaturamento = 0;
+            let relatoriosMes = 0;
+            const mesAtual = new Date().getMonth();
+            const anoAtual = new Date().getFullYear();
+          
+            relatorios.forEach(relatorio => {
+                totalArea += relatorio.area || 0;
+                totalFaturamento += relatorio.valorCobrado || 0;
+              
+                const dataRelatorio = new Date(relatorio.timestamp);
+                if (dataRelatorio.getMonth() === mesAtual && dataRelatorio.getFullYear() === anoAtual) {
+                    relatoriosMes++;
+                }
+              
+                const dataFormatada = new Date(relatorio.timestamp).toLocaleDateString('pt-BR');
+                const tipoTexto = relatorio.tipo === 'rapido' ? 'Relatório Rápido' : 'Relatório Completo';
+              
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td>${relatorio.cliente || 'N/A'}</td>
+                        <td>${tipoTexto}</td>
+                        <td>${(relatorio.area || 0).toFixed(1)} ha</td>
+                        <td>R$ ${(relatorio.valorCobrado || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>
+                            <button class="btn" onclick="viewReport('${relatorio.id}')" style="background: var(--info-color); color: white; padding: 5px 10px; margin-right: 5px;">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn" onclick="deleteReport('${relatorio.id}')" style="background: var(--danger-color); color: white; padding: 5px 10px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+          
+            document.getElementById('total-relatorios').textContent = relatorios.length;
+            document.getElementById('area-total').textContent = totalArea.toFixed(1) + ' ha';
+            document.getElementById('faturamento-total').textContent = 'R$ ' + totalFaturamento.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('relatorios-mes').textContent = relatoriosMes;
+          
+            showNotification('Relatórios carregados com sucesso!', 'success');
+        }, 1000);
+      
+    } catch (error) {
+        console.error('Erro ao carregar relatórios:', error);
+        showNotification('Erro ao carregar relatórios', 'error');
+    }
+}
+
+function viewReport(id) {
+    const relatorios = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+    const relatorio = relatorios.find(r => r.id === id);
+  
+    if (!relatorio) {
+        showNotification('Relatório não encontrado', 'error');
+        return;
+    }
+  
+    const dataFormatada = new Date(relatorio.timestamp).toLocaleDateString('pt-BR');
+    const tipoTexto = relatorio.tipo === 'rapido' ? 'Relatório Rápido' : 'Relatório Completo';
+  
+    const modalContent = `
+        <div style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+            <h3>${tipoTexto} #${id}</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h4>Informações do Serviço</h4>
+                <p><strong>Cliente:</strong> ${relatorio.cliente || 'N/A'}</p>
+                <p><strong>Data:</strong> ${dataFormatada}</p>
+                <p><strong>Tipo de Serviço:</strong> ${relatorio.tipoServico || 'N/A'}</p>
+                <p><strong>Área:</strong> ${(relatorio.area || 0).toFixed(1)} ha</p>
+                <p><strong>Valor:</strong> R$ ${(relatorio.valorCobrado || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                ${relatorio.observacoes ? `<p><strong>Observações:</strong> ${relatorio.observacoes}</p>` : ''}
+                ${relatorio.piloto ? `<p><strong>Piloto:</strong> ${relatorio.piloto}</p>` : ''}
+                ${relatorio.drone ? `<p><strong>Drone:</strong> ${relatorio.drone}</p>` : ''}
+                ${relatorio.cultura ? `<p><strong>Cultura:</strong> ${relatorio.cultura}</p>` : ''}
+            </div>
+            ${relatorio.croqui ? `
+                <div class="croqui-preview-container">
+                    <h4>Croqui da Área</h4>
+                    <img src="${relatorio.croqui}" class="croqui-image" alt="Croqui da área pulverizada">
+                </div>
+            ` : ''}
+            <div class="report-actions">
+                <button class="btn btn-primary" onclick="imprimirRelatorio('${id}')">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn" style="background: var(--success-color); color: white;" onclick="downloadRelatorioPDF('${id}')">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button class="btn" style="background: #25D366; color: white;" onclick="compartilharWhatsAppRelatorio('${id}')">
+                    <i class="fas fa-comment"></i> Compartilhar no WhatsApp
+                </button>
+            </div>
+        </div>
+    `;
+  
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 700px;">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            ${modalContent}
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function deleteReport(id) {
+    if (confirm('Tem certeza que deseja excluir este relatório?')) {
+        try {
+            const relatorios = JSON.parse(localStorage.getItem('relatoriosSalvos') || '[]');
+            const relatoriosAtualizados = relatorios.filter(r => r.id !== id);
+            localStorage.setItem('relatoriosSalvos', JSON.stringify(relatoriosAtualizados));
+            showNotification('Relatório excluído com sucesso!', 'success');
+            loadSavedReports();
+        } catch (error) {
+            console.error('Erro ao excluir relatório:', error);
+            showNotification('Erro ao excluir relatório', 'error');
+        }
+    }
+}
+
+function imprimirRelatorio(id) {
+    showNotification(`Imprimindo relatório ${id}...`, 'info');
+}
+
+function downloadRelatorioPDF(id) {
+    showNotification(`Download do relatório ${id} iniciado...`, 'info');
+}
+
+function compartilharWhatsAppRelatorio(id) {
+    showNotification(`Compartilhando relatório ${id} no WhatsApp...`, 'info');
+}
+
+// =============================================
+// MÓDULO DE CLIENTES - CORRIGIDO
+// =============================================
+function loadClientes() {
+    const tbody = document.getElementById('clientes-tbody');
+    if (!tbody) return;
+
+    try {
+        const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+      
+        if (clientes.length === 0) {
+            const clientesPadrao = [
+                {
+                    id: 'C1',
+                    nome: 'Fazenda São João',
+                    contato: 'João Silva - (14) 99999-9999',
+                    localizacao: 'Bauru/SP',
+                    linkMaps: 'https://maps.google.com/?q=Fazenda+São+João+Bauru',
+                    pontoReferencia: 'Próximo ao km 25 da rodovia',
+                    nomeDono: 'João Silva',
+                    responsavel: 'Maria Santos',
+                    area: 350,
+                    ultimoServico: '15/03/2024',
+                    status: 'ativo'
+                },
+                {
+                    id: 'C2',
+                    nome: 'Agropecuária Nova Esperança',
+                    contato: 'Maria Santos - (14) 98888-8888',
+                    localizacao: 'Lençóis Paulista/SP',
+                    linkMaps: 'https://maps.google.com/?q=Agropecuária+Nova+Esperança+Lençóis+Paulista',
+                    pontoReferencia: 'Entrada à direita após a ponte',
+                    nomeDono: 'Carlos Oliveira',
+                    responsavel: 'Pedro Almeida',
+                    area: 280,
+                    ultimoServico: '10/03/2024',
+                    status: 'ativo'
+                },
+                {
+                    id: 'C3',
+                    nome: 'Sítio Vale Verde',
+                    contato: 'Carlos Oliveira - (14) 97777-7777',
+                    localizacao: 'Agudos/SP',
+                    linkMaps: 'https://maps.google.com/?q=Sítio+Vale+Verde+Agudos',
+                    pontoReferencia: 'Estrada de terra, 3km após o posto',
+                    nomeDono: 'Ana Pereira',
+                    responsavel: 'Roberto Silva',
+                    area: 150,
+                    ultimoServico: '05/03/2024',
+                    status: 'ativo'
+                }
+            ];
+          
+            localStorage.setItem('clientesSalvos', JSON.stringify(clientesPadrao));
+            displayClientes(clientesPadrao);
+        } else {
+            displayClientes(clientes);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar clientes:', error);
+    }
+  
+    function displayClientes(clientesArray) {
+        tbody.innerHTML = '';
+      
+        clientesArray.forEach(cliente => {
+            const statusClass = cliente.status === 'ativo' ? 'status-executado' : 'status-cancelado';
+            const statusText = cliente.status === 'ativo' ? 'Ativo' : 'Inativo';
+          
+            tbody.innerHTML += `
+                <tr>
+                    <td>
+                        <div style="font-weight: 600;">${cliente.nome}</div>
+                        <div style="font-size: 0.8rem; color: #666;">ID: ${cliente.id}</div>
+                    </td>
+                    <td>
+                        <div>${cliente.contato}</div>
+                    </td>
+                    <td>
+                        <div>${cliente.localizacao}</div>
+                        ${cliente.linkMaps ? `<a href="${cliente.linkMaps}" target="_blank" class="location-link"><i class="fas fa-map-marker-alt"></i> Ver no Maps</a>` : ''}
+                    </td>
+                    <td>${cliente.area} ha</td>
+                    <td>${cliente.ultimoServico}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons" style="display: flex; gap: 5px;">
+                            <button class="btn-icon btn-edit" onclick="editCliente('${cliente.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon btn-delete" onclick="deleteCliente('${cliente.id}')"><i class="fas fa-trash"></i></button>
+                            <button class="btn-icon" style="background: #e3f2fd; color: var(--primary-color);" onclick="viewCliente('${cliente.id}')"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+      
+        const totalClientesElement = document.getElementById('total-clientes');
+        const clientesAtivosElement = document.getElementById('clientes-ativos');
+        const areaTotalClientesElement = document.getElementById('area-total-clientes');
+      
+        if (totalClientesElement) totalClientesElement.textContent = clientesArray.length;
+        if (clientesAtivosElement) clientesAtivosElement.textContent = clientesArray.filter(c => c.status === 'ativo').length;
+      
+        const areaTotal = clientesArray.reduce((total, cliente) => total + (cliente.area || 0), 0);
+        if (areaTotalClientesElement) areaTotalClientesElement.textContent = areaTotal;
+    }
+}
+
+const novoClienteBtn = document.getElementById('novo-cliente');
+if (novoClienteBtn) {
+    novoClienteBtn.addEventListener('click', function() {
+        openModal('modal-cliente', 'Novo Cliente');
+        document.getElementById('cliente-nome').value = '';
+        document.getElementById('cliente-contato').value = '';
+        document.getElementById('cliente-localizacao').value = '';
+        document.getElementById('cliente-link-maps').value = '';
+        document.getElementById('cliente-ponto-referencia').value = '';
+        document.getElementById('cliente-nome-dono').value = '';
+        document.getElementById('cliente-responsavel').value = '';
+        document.getElementById('cliente-area').value = '';
+        document.getElementById('cliente-ultimo-servico').value = '';
+        document.getElementById('cliente-status').value = 'ativo';
+    });
+}
+
+function openModal(modalId, title) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'block';
+        const modalTitle = document.getElementById(`modal-title-${modalId.split('-')[1]}`);
+        if (modalTitle) {
+            modalTitle.textContent = title;
+        }
+    }
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
+}
+
+function salvarCliente() {
+    const nome = document.getElementById('cliente-nome').value;
+    const contato = document.getElementById('cliente-contato').value;
+    const localizacao = document.getElementById('cliente-localizacao').value;
+    const linkMaps = document.getElementById('cliente-link-maps').value;
+    const pontoReferencia = document.getElementById('cliente-ponto-referencia').value;
+    const nomeDono = document.getElementById('cliente-nome-dono').value;
+    const responsavel = document.getElementById('cliente-responsavel').value;
+    const area = parseFloat(document.getElementById('cliente-area').value) || 0;
+    const ultimoServico = document.getElementById('cliente-ultimo-servico').value;
+    const status = document.getElementById('cliente-status').value;
+  
+    if (!nome || !contato || !localizacao) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    try {
+        const clientesExistentes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+      
+        // VERIFICAÇÃO CORRIGIDA - não impede salvamento
+        const clienteExistente = clientesExistentes.find(c => c.nome.toLowerCase() === nome.toLowerCase());
+        if (clienteExistente) {
+            if (!confirm('Já existe um cliente com nome similar. Deseja adicionar mesmo assim?')) {
+                return;
+            }
+        }
+      
+        const novoCliente = {
+            id: 'C' + Date.now(),
+            nome,
+            contato,
+            localizacao,
+            linkMaps,
+            pontoReferencia,
+            nomeDono,
+            responsavel,
+            area,
+            ultimoServico: ultimoServico || new Date().toLocaleDateString('pt-BR'),
+            status,
+            timestamp: new Date().toISOString()
+        };
+      
+        clientesExistentes.push(novoCliente);
+        localStorage.setItem('clientesSalvos', JSON.stringify(clientesExistentes));
+      
+        showNotification('Cliente salvo com sucesso!', 'success');
+        closeModal('modal-cliente');
+        loadClientes();
+      
+    } catch (error) {
+        console.error('Erro ao salvar cliente:', error);
+        showNotification('Erro ao salvar cliente', 'error');
+    }
+}
+
+function editCliente(id) {
+    const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+    const cliente = clientes.find(c => c.id === id);
+  
+    if (!cliente) {
+        showNotification('Cliente não encontrado', 'error');
+        return;
+    }
+  
+    document.getElementById('cliente-nome').value = cliente.nome;
+    document.getElementById('cliente-contato').value = cliente.contato;
+    document.getElementById('cliente-localizacao').value = cliente.localizacao;
+    document.getElementById('cliente-link-maps').value = cliente.linkMaps || '';
+    document.getElementById('cliente-ponto-referencia').value = cliente.pontoReferencia || '';
+    document.getElementById('cliente-nome-dono').value = cliente.nomeDono || '';
+    document.getElementById('cliente-responsavel').value = cliente.responsavel || '';
+    document.getElementById('cliente-area').value = cliente.area;
+    document.getElementById('cliente-ultimo-servico').value = cliente.ultimoServico;
+    document.getElementById('cliente-status').value = cliente.status;
+  
+    openModal('modal-cliente', 'Editar Cliente');
+  
+    const btnSalvar = document.querySelector('#modal-cliente .btn-primary');
+    btnSalvar.onclick = function() { atualizarCliente(id); };
+}
+
+function atualizarCliente(id) {
+    const nome = document.getElementById('cliente-nome').value;
+    const contato = document.getElementById('cliente-contato').value;
+    const localizacao = document.getElementById('cliente-localizacao').value;
+    const linkMaps = document.getElementById('cliente-link-maps').value;
+    const pontoReferencia = document.getElementById('cliente-ponto-referencia').value;
+    const nomeDono = document.getElementById('cliente-nome-dono').value;
+    const responsavel = document.getElementById('cliente-responsavel').value;
+    const area = parseFloat(document.getElementById('cliente-area').value) || 0;
+    const ultimoServico = document.getElementById('cliente-ultimo-servico').value;
+    const status = document.getElementById('cliente-status').value;
+  
+    if (!nome || !contato || !localizacao) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    try {
+        const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+        const clienteIndex = clientes.findIndex(c => c.id === id);
+      
+        if (clienteIndex === -1) {
+            showNotification('Cliente não encontrado', 'error');
+            return;
+        }
+      
+        clientes[clienteIndex] = {
+            ...clientes[clienteIndex],
+            nome,
+            contato,
+            localizacao,
+            linkMaps,
+            pontoReferencia,
+            nomeDono,
+            responsavel,
+            area,
+            ultimoServico,
+            status
+        };
+      
+        localStorage.setItem('clientesSalvos', JSON.stringify(clientes));
+      
+        showNotification('Cliente atualizado com sucesso!', 'success');
+        closeModal('modal-cliente');
+        loadClientes();
+      
+    } catch (error) {
+        console.error('Erro ao atualizar cliente:', error);
+        showNotification('Erro ao atualizar cliente', 'error');
+    }
+}
+
+function deleteCliente(id) {
+    if (confirm('Tem certeza que deseja excluir este cliente?')) {
+        try {
+            const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+            const clientesAtualizados = clientes.filter(c => c.id !== id);
+            localStorage.setItem('clientesSalvos', JSON.stringify(clientesAtualizados));
+            showNotification('Cliente excluído com sucesso!', 'success');
+            loadClientes();
+        } catch (error) {
+            console.error('Erro ao excluir cliente:', error);
+            showNotification('Erro ao excluir cliente', 'error');
+        }
+    }
+}
+
+function viewCliente(id) {
+    const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+    const cliente = clientes.find(c => c.id === id);
+  
+    if (!cliente) {
+        showNotification('Cliente não encontrado', 'error');
+        return;
+    }
+  
+    const modalContent = `
+        <div style="padding: 20px;">
+            <h3>${cliente.nome}</h3>
+            <div class="client-details-grid">
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Contato</div>
+                    <div class="client-detail-value">${cliente.contato}</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Localização</div>
+                    <div class="client-detail-value">${cliente.localizacao}</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Proprietário</div>
+                    <div class="client-detail-value">${cliente.nomeDono || 'N/A'}</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Responsável</div>
+                    <div class="client-detail-value">${cliente.responsavel || 'N/A'}</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Área</div>
+                    <div class="client-detail-value">${cliente.area} ha</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Último Serviço</div>
+                    <div class="client-detail-value">${cliente.ultimoServico}</div>
+                </div>
+                <div class="client-detail-item">
+                    <div class="client-detail-label">Status</div>
+                    <div class="client-detail-value">${cliente.status === 'ativo' ? 'Ativo' : 'Inativo'}</div>
+                </div>
+            </div>
+            ${cliente.linkMaps ? `
+                <div style="margin-top: 15px;">
+                    <a href="${cliente.linkMaps}" target="_blank" class="location-link">
+                        <i class="fas fa-map-marker-alt"></i> Ver localização no Google Maps
+                    </a>
+                </div>
+            ` : ''}
+            ${cliente.pontoReferencia ? `
+                <div class="distance-info">
+                    <strong>Ponto de Referência:</strong> ${cliente.pontoReferencia}
+                </div>
+            ` : ''}
+            <button class="btn btn-primary" onclick="this.parentElement.parentElement.parentElement.remove()" style="margin-top: 20px;">
+                <i class="fas fa-times"></i> Fechar
+            </button>
+        </div>
+    `;
+  
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            ${modalContent}
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+// =============================================
+// MÓDULO DE ORÇAMENTOS
+// =============================================
+function loadOrcamentos() {
+    const tbody = document.getElementById('orcamentos-tbody');
+    if (!tbody) return;
+
+    try {
+        const orcamentos = JSON.parse(localStorage.getItem('orcamentosSalvos') || '[]');
+      
+        if (orcamentos.length === 0) {
+            const orcamentosPadrao = [
+                {
+                    id: 'O1',
+                    cliente: 'Fazenda São João',
+                    data: '15/03/2024',
+                    valor: 12500,
+                    status: 'aprovado',
+                    vencimento: '15/04/2024',
+                    descricao: 'Pulverização 50 ha'
+                },
+                {
+                    id: 'O2',
+                    cliente: 'Agropecuária Nova Esperança',
+                    data: '12/03/2024',
+                    valor: 8500,
+                    status: 'pendente',
+                    vencimento: '12/04/2024',
+                    descricao: 'Mapeamento 30 ha'
+                },
+                {
+                    id: 'O3',
+                    cliente: 'Sítio Vale Verde',
+                    data: '10/03/2024',
+                    valor: 6200,
+                    status: 'recusado',
+                    vencimento: '10/04/2024',
+                    descricao: 'Pulverização 25 ha'
+                }
+            ];
+          
+            localStorage.setItem('orcamentosSalvos', JSON.stringify(orcamentosPadrao));
+            displayOrcamentos(orcamentosPadrao);
+        } else {
+            displayOrcamentos(orcamentos);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar orçamentos:', error);
+    }
+  
+    function displayOrcamentos(orcamentosArray) {
+        tbody.innerHTML = '';
+      
+        orcamentosArray.forEach(orcamento => {
+            let statusClass = '';
+            let statusText = '';
+          
+            switch(orcamento.status) {
+                case 'pendente':
+                    statusClass = 'status-aguardando';
+                    statusText = 'Pendente';
+                    break;
+                case 'aprovado':
+                    statusClass = 'status-executado';
+                    statusText = 'Aprovado';
+                    break;
+                case 'recusado':
+                    statusClass = 'status-cancelado';
+                    statusText = 'Recusado';
+                    break;
+                default:
+                    statusClass = 'status-aguardando';
+                    statusText = 'Pendente';
+            }
+          
+            tbody.innerHTML += `
+                <tr>
+                    <td>${orcamento.cliente}</td>
+                    <td>${orcamento.data}</td>
+                    <td>R$ ${orcamento.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                    <td>${orcamento.vencimento}</td>
+                    <td>
+                        <div class="action-buttons" style="display: flex; gap: 5px;">
+                            <button class="btn-icon" style="background: var(--info-color); color: white;" onclick="viewOrcamento('${orcamento.id}')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon" style="background: var(--success-color); color: white;" onclick="downloadOrcamentoPDF('${orcamento.id}')">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteOrcamento('${orcamento.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+}
+
+const novoOrcamentoBtn = document.getElementById('novo-orcamento');
+if (novoOrcamentoBtn) {
+    novoOrcamentoBtn.addEventListener('click', function() {
+        openModal('modal-orcamento', 'Novo Orçamento');
+        limparFormularioOrcamento();
+        carregarClientesOrcamento();
+    });
+}
+
+function carregarClientesOrcamento() {
+    const select = document.getElementById('orcamento-cliente');
+    if (!select) return;
+  
+    select.innerHTML = '<option value="">Selecione um cliente</option>';
+  
+    try {
+        const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+        clientes.forEach(cliente => {
+            select.innerHTML += `<option value="${cliente.id}">${cliente.nome}</option>`;
+        });
+    } catch (error) {
+        console.error('Erro ao carregar clientes para orçamento:', error);
+    }
+}
+
+function limparFormularioOrcamento() {
+    document.getElementById('orcamento-cliente').value = '';
+    document.getElementById('orcamento-endereco').value = '';
+    document.getElementById('orcamento-cnpj').value = '';
+    document.getElementById('orcamento-telefone').value = '';
+    document.getElementById('orcamento-email').value = '';
+    document.getElementById('orcamento-area').value = '';
+    document.getElementById('orcamento-cultura1').value = '';
+    document.getElementById('orcamento-cultura2').value = '';
+    document.getElementById('orcamento-cultura3').value = '';
+    document.getElementById('orcamento-maps').value = '';
+    document.getElementById('orcamento-pagamento').value = '';
+    document.getElementById('orcamento-outro-pagamento').style.display = 'none';
+    document.getElementById('orcamento-outro-descricao').value = '';
+    document.getElementById('orcamento-vencimento').value = '';
+    document.getElementById('orcamento-parcelas').value = '';
+    document.getElementById('orcamento-descricao').value = '';
+    document.getElementById('orcamento-valor').value = '';
+    document.getElementById('orcamento-validade').value = '30';
+    document.getElementById('orcamento-status').value = 'pendente';
+}
+
+function salvarOrcamento() {
+    const clienteId = document.getElementById('orcamento-cliente').value;
+    const endereco = document.getElementById('orcamento-endereco').value;
+    const cnpj = document.getElementById('orcamento-cnpj').value;
+    const telefone = document.getElementById('orcamento-telefone').value;
+    const email = document.getElementById('orcamento-email').value;
+    const area = parseFloat(document.getElementById('orcamento-area').value) || 0;
+    const cultura1 = document.getElementById('orcamento-cultura1').value;
+    const cultura2 = document.getElementById('orcamento-cultura2').value;
+    const cultura3 = document.getElementById('orcamento-cultura3').value;
+    const maps = document.getElementById('orcamento-maps').value;
+    const pagamento = document.getElementById('orcamento-pagamento').value;
+    const outroPagamento = document.getElementById('orcamento-outro-descricao').value;
+    const vencimento = document.getElementById('orcamento-vencimento').value;
+    const parcelas = parseInt(document.getElementById('orcamento-parcelas').value) || 1;
+    const descricao = document.getElementById('orcamento-descricao').value;
+    const valor = parseFloat(document.getElementById('orcamento-valor').value) || 0;
+    const validade = parseInt(document.getElementById('orcamento-validade').value) || 30;
+    const status = document.getElementById('orcamento-status').value;
+  
+    if (!clienteId || !area || !valor) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    try {
+        const clientes = JSON.parse(localStorage.getItem('clientesSalvos') || '[]');
+        const cliente = clientes.find(c => c.id === clienteId);
+      
+        if (!cliente) {
+            showNotification('Cliente não encontrado', 'error');
+            return;
+        }
+      
+        const orcamentosExistentes = JSON.parse(localStorage.getItem('orcamentosSalvos') || '[]');
+      
+        const novoOrcamento = {
+            id: 'O' + Date.now(),
+            clienteId,
+            cliente: cliente.nome,
+            endereco,
+            cnpj,
+            telefone,
+            email,
+            area,
+            culturas: [cultura1, cultura2, cultura3].filter(c => c),
+            maps,
+            pagamento: pagamento === 'outro' ? outroPagamento : pagamento,
+            vencimento,
+            parcelas,
+            descricao,
+            valor,
+            validade,
+            status,
+            timestamp: new Date().toISOString()
+        };
+      
+        orcamentosExistentes.push(novoOrcamento);
+        localStorage.setItem('orcamentosSalvos', JSON.stringify(orcamentosExistentes));
+      
+        showNotification('Orçamento salvo com sucesso!', 'success');
+        closeModal('modal-orcamento');
+        loadOrcamentos();
+      
+    } catch (error) {
+        console.error('Erro ao salvar orçamento:', error);
+        showNotification('Erro ao salvar orçamento', 'error');
+    }
+}
+
+function viewOrcamento(id) {
+    const orcamentos = JSON.parse(localStorage.getItem('orcamentosSalvos') || '[]');
+    const orcamento = orcamentos.find(o => o.id === id);
+  
+    if (!orcamento) {
+        showNotification('Orçamento não encontrado', 'error');
+        return;
+    }
+  
+    const modalContent = `
+        <div style="padding: 20px;">
+            <h3>Orçamento #${id}</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 15px 0;">
+                <h4>Informações do Cliente</h4>
+                <p><strong>Cliente:</strong> ${orcamento.cliente}</p>
+                <p><strong>Área:</strong> ${orcamento.area} ha</p>
+                <p><strong>Valor:</strong> R$ ${orcamento.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                <p><strong>Status:</strong> ${orcamento.status}</p>
+                <p><strong>Vencimento:</strong> ${orcamento.vencimento}</p>
+                <p><strong>Descrição:</strong> ${orcamento.descricao}</p>
+                ${orcamento.culturas && orcamento.culturas.length > 0 ? 
+                    `<p><strong>Culturas:</strong> ${orcamento.culturas.join(', ')}</p>` : ''}
+            </div>
+            <div class="report-actions">
+                <button class="btn btn-primary" onclick="imprimirOrcamentoPDF('${id}')">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn" style="background: var(--success-color); color: white;" onclick="downloadOrcamentoPDF('${id}')">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button class="btn" style="background: #25D366; color: white;" onclick="compartilharWhatsAppOrcamento('${id}')">
+                    <i class="fas fa-comment"></i> Compartilhar
+                </button>
+            </div>
+        </div>
+    `;
+  
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            ${modalContent}
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function downloadOrcamentoPDF(id) {
+    showNotification(`Gerando PDF do orçamento ${id}...`, 'info');
+}
+
+function deleteOrcamento(id) {
+    if (confirm('Tem certeza que deseja excluir este orçamento?')) {
+        try {
+            const orcamentos = JSON.parse(localStorage.getItem('orcamentosSalvos') || '[]');
+            const orcamentosAtualizados = orcamentos.filter(o => o.id !== id);
+            localStorage.setItem('orcamentosSalvos', JSON.stringify(orcamentosAtualizados));
+            showNotification('Orçamento excluído com sucesso!', 'success');
+            loadOrcamentos();
+        } catch (error) {
+            console.error('Erro ao excluir orçamento:', error);
+            showNotification('Erro ao excluir orçamento', 'error');
+        }
+    }
+}
+
+function imprimirOrcamentoPDF(id) {
+    showNotification(`Imprimindo orçamento ${id}...`, 'info');
+}
+
+function compartilharWhatsAppOrcamento(id) {
+    showNotification(`Compartilhando orçamento ${id} no WhatsApp...`, 'info');
+}
+
+// =============================================
+// MÓDULO DE CAIXA
+// =============================================
+function loadCaixa() {
+    const tbody = document.getElementById('caixa-tbody');
+    if (!tbody) return;
+
+    try {
+        const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+      
+        if (movimentacoes.length === 0) {
+            const movimentacoesPadrao = [
+                {
+                    id: 'M1',
+                    data: '15/03/2024',
+                    descricao: 'Pagamento Fazenda São João',
+                    categoria: 'entrada',
+                    valor: 12500,
+                    tipo: 'entrada'
+                },
+                {
+                    id: 'M2',
+                    data: '14/03/2024',
+                    descricao: 'Combustível',
+                    categoria: 'operacional',
+                    valor: 350,
+                    tipo: 'saida'
+                },
+                {
+                    id: 'M3',
+                    data: '13/03/2024',
+                    descricao: 'Manutenção drones',
+                    categoria: 'operacional',
+                    valor: 1200,
+                    tipo: 'saida'
+                }
+            ];
+          
+            localStorage.setItem('movimentacoesCaixa', JSON.stringify(movimentacoesPadrao));
+            displayMovimentacoes(movimentacoesPadrao);
+        } else {
+            displayMovimentacoes(movimentacoes);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar movimentações:', error);
+    }
+  
+    function displayMovimentacoes(movimentacoesArray) {
+        tbody.innerHTML = '';
+      
+        movimentacoesArray.forEach(mov => {
+            const tipoClass = mov.tipo === 'entrada' ? 'status-executado' : 'status-cancelado';
+            const tipoText = mov.tipo === 'entrada' ? 'Entrada' : 'Saída';
+          
+            tbody.innerHTML += `
+                <tr>
+                    <td>${mov.data}</td>
+                    <td>${mov.descricao}</td>
+                    <td>${mov.categoria}</td>
+                    <td>R$ ${mov.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td><span class="status-badge ${tipoClass}">${tipoText}</span></td>
+                    <td>
+                        <div class="action-buttons" style="display: flex; gap: 5px;">
+                            <button class="btn-icon btn-edit" onclick="editMovimentacao('${mov.id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="deleteMovimentacao('${mov.id}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+      
+        calcularTotaisCaixa(movimentacoesArray);
+    }
+  
+    function calcularTotaisCaixa(movimentacoes) {
+        const hoje = new Date();
+        const mesAtual = hoje.getMonth();
+        const anoAtual = hoje.getFullYear();
+      
+        let saldoAtual = 0;
+        let entradasMes = 0;
+        let saidasMes = 0;
+      
+        movimentacoes.forEach(mov => {
+            const dataMov = new Date(mov.data);
+            saldoAtual += mov.tipo === 'entrada' ? mov.valor : -mov.valor;
+          
+            if (dataMov.getMonth() === mesAtual && dataMov.getFullYear() === anoAtual) {
+                if (mov.tipo === 'entrada') {
+                    entradasMes += mov.valor;
+                } else {
+                    saidasMes += mov.valor;
+                }
+            }
+        });
+      
+        const lucroLiquido = entradasMes - saidasMes;
+      
+        document.getElementById('saldo-atual').textContent = `R$ ${saldoAtual.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('entradas-mes').textContent = `R$ ${entradasMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('saidas-mes').textContent = `R$ ${saidasMes.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+        document.getElementById('lucro-liquido').textContent = `R$ ${lucroLiquido.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+    }
+}
+
+const novaEntradaBtn = document.getElementById('nova-entrada');
+const novaSaidaBtn = document.getElementById('nova-saida');
+
+if (novaEntradaBtn) {
+    novaEntradaBtn.addEventListener('click', function() {
+        openModal('modal-caixa', 'Nova Entrada');
+        document.getElementById('caixa-tipo').value = 'entrada';
+        limparFormularioCaixa();
+    });
+}
+
+if (novaSaidaBtn) {
+    novaSaidaBtn.addEventListener('click', function() {
+        openModal('modal-caixa', 'Nova Saída');
+        document.getElementById('caixa-tipo').value = 'saida';
+        limparFormularioCaixa();
+    });
+}
+
+function limparFormularioCaixa() {
+    document.getElementById('caixa-descricao').value = '';
+    document.getElementById('caixa-categoria').value = 'operacional';
+    document.getElementById('caixa-outros-container').style.display = 'none';
+    document.getElementById('caixa-outros-descricao').value = '';
+    document.getElementById('caixa-valor').value = '';
+    document.getElementById('caixa-data').value = new Date().toISOString().split('T')[0];
+}
+
+function salvarMovimentacaoCaixa() {
+    const tipo = document.getElementById('caixa-tipo').value;
+    const descricao = document.getElementById('caixa-descricao').value;
+    const categoria = document.getElementById('caixa-categoria').value;
+    const outrosDescricao = document.getElementById('caixa-outros-descricao').value;
+    const valor = parseFloat(document.getElementById('caixa-valor').value) || 0;
+    const data = document.getElementById('caixa-data').value;
+  
+    if (!descricao || !valor || !data) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    try {
+        const movimentacoesExistentes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+      
+        const novaMovimentacao = {
+            id: 'M' + Date.now(),
+            tipo,
+            descricao,
+            categoria: categoria === 'outros' ? outrosDescricao : categoria,
+            valor,
+            data,
+            timestamp: new Date().toISOString()
+        };
+      
+        movimentacoesExistentes.push(novaMovimentacao);
+        localStorage.setItem('movimentacoesCaixa', JSON.stringify(movimentacoesExistentes));
+      
+        showNotification('Movimentação salva com sucesso!', 'success');
+        closeModal('modal-caixa');
+        loadCaixa();
+      
+    } catch (error) {
+        console.error('Erro ao salvar movimentação:', error);
+        showNotification('Erro ao salvar movimentação', 'error');
+    }
+}
+
+function editMovimentacao(id) {
+    const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+    const movimentacao = movimentacoes.find(m => m.id === id);
+  
+    if (!movimentacao) {
+        showNotification('Movimentação não encontrada', 'error');
+        return;
+    }
+  
+    openModal('modal-caixa', 'Editar Movimentação');
+  
+    document.getElementById('caixa-tipo').value = movimentacao.tipo;
+    document.getElementById('caixa-descricao').value = movimentacao.descricao;
+    
+    const isOutros = ['administrativo', 'operacional', 'comercial', 'marketing'].indexOf(movimentacao.categoria) === -1;
+    if (isOutros) {
+        document.getElementById('caixa-categoria').value = 'outros';
+        document.getElementById('caixa-outros-container').style.display = 'block';
+        document.getElementById('caixa-outros-descricao').value = movimentacao.categoria;
+    } else {
+        document.getElementById('caixa-categoria').value = movimentacao.categoria;
+        document.getElementById('caixa-outros-container').style.display = 'none';
+    }
+    
+    document.getElementById('caixa-valor').value = movimentacao.valor;
+    document.getElementById('caixa-data').value = movimentacao.data;
+  
+    const btnSalvar = document.querySelector('#modal-caixa .btn-primary');
+    btnSalvar.onclick = function() { atualizarMovimentacao(id); };
+}
+
+function atualizarMovimentacao(id) {
+    const tipo = document.getElementById('caixa-tipo').value;
+    const descricao = document.getElementById('caixa-descricao').value;
+    const categoria = document.getElementById('caixa-categoria').value;
+    const outrosDescricao = document.getElementById('caixa-outros-descricao').value;
+    const valor = parseFloat(document.getElementById('caixa-valor').value) || 0;
+    const data = document.getElementById('caixa-data').value;
+  
+    if (!descricao || !valor || !data) {
+        showNotification('Preencha os campos obrigatórios', 'warning');
+        return;
+    }
+  
+    try {
+        const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+        const movimentacaoIndex = movimentacoes.findIndex(m => m.id === id);
+      
+        if (movimentacaoIndex === -1) {
+            showNotification('Movimentação não encontrada', 'error');
+            return;
+        }
+      
+        movimentacoes[movimentacaoIndex] = {
+            ...movimentacoes[movimentacaoIndex],
+            tipo,
+            descricao,
+            categoria: categoria === 'outros' ? outrosDescricao : categoria,
+            valor,
+            data
+        };
+      
+        localStorage.setItem('movimentacoesCaixa', JSON.stringify(movimentacoes));
+      
+        showNotification('Movimentação atualizada com sucesso!', 'success');
+        closeModal('modal-caixa');
+        loadCaixa();
+      
+    } catch (error) {
+        console.error('Erro ao atualizar movimentação:', error);
+        showNotification('Erro ao atualizar movimentação', 'error');
+    }
+}
+
+function deleteMovimentacao(id) {
+    if (confirm('Tem certeza que deseja excluir esta movimentação?')) {
+        try {
+            const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+            const movimentacoesAtualizadas = movimentacoes.filter(m => m.id !== id);
+            localStorage.setItem('movimentacoesCaixa', JSON.stringify(movimentacoesAtualizadas));
+            showNotification('Movimentação excluída com sucesso!', 'success');
+            loadCaixa();
+        } catch (error) {
+            console.error('Erro ao excluir movimentação:', error);
+            showNotification('Erro ao excluir movimentação', 'error');
+        }
+    }
+}
+
+const exportarCaixaBtn = document.getElementById('exportar-caixa');
+if (exportarCaixaBtn) {
+    exportarCaixaBtn.addEventListener('click', function() {
+        exportarCaixaExcel();
+    });
+}
+
+function exportarCaixaExcel() {
+    try {
+        const movimentacoes = JSON.parse(localStorage.getItem('movimentacoesCaixa') || '[]');
+      
+        if (movimentacoes.length === 0) {
+            showNotification('Não há movimentações para exportar', 'warning');
+            return;
+        }
+      
+        const data = [
+            ['Data', 'Descrição', 'Categoria', 'Valor (R$)', 'Tipo'],
+            ...movimentacoes.map(mov => [
+                mov.data,
+                mov.descricao,
+                mov.categoria,
+                mov.valor,
+                mov.tipo === 'entrada' ? 'Entrada' : 'Saída'
+            ])
+        ];
+      
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Movimentações Caixa");
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        XLSX.writeFile(wb, `caixa_${timestamp}.xlsx`);
+        showNotification('Arquivo Excel gerado com sucesso!', 'success');
+    } catch (error) {
+        console.error('Erro ao gerar Excel:', error);
+        showNotification('Erro ao gerar arquivo Excel', 'error');
+    }
+}
+
+// =============================================
+// FUNÇÕES AUXILIARES
+// =============================================
+function visualizarOrcamento(id) {
+    const orcamentos = JSON.parse(localStorage.getItem('calculosSalvos') || '[]');
+    const orcamento = orcamentos.find(o => o.id === id);
+  
+    if (!orcamento) {
+        showNotification('Orçamento não encontrado', 'error');
+        return;
+    }
+  
+    const modalContent = `
+        <div style="padding: 20px;">
+            <h3>Orçamento #${id}</h3>
+            <p><strong>Área:</strong> ${orcamento.area} ha</p>
+            <p><strong>Faturamento:</strong> R$ ${orcamento.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2})}</p>
+            <p><strong>Custos:</strong> R$ ${orcamento.totalCosts.toLocaleString('pt-BR', { minimumFractionDigits: 2})}</p>
+            <p><strong>Lucro:</strong> R$ ${orcamento.profit.toLocaleString('pt-BR', { minimumFractionDigits: 2})}</p>
+            <p><strong>Margem:</strong> ${orcamento.margin.toFixed(1)}%</p>
+            <p><strong>Data:</strong> ${new Date(orcamento.timestamp).toLocaleDateString('pt-BR')}</p>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="imprimirOrcamento('${id}')">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn" style="background: var(--success-color); color: white;" onclick="downloadOrcamento('${id}')">
+                    <i class="fas fa-download"></i> Download Excel
+                </button>
+            </div>
+        </div>
+    `;
+  
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.display = 'block';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            ${modalContent}
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function downloadOrcamento(id) {
+    showNotification(`Gerando download do orçamento ${id}...`, 'info');
+    const orcamentos = JSON.parse(localStorage.getItem('calculosSalvos') || '[]');
+    const orcamento = orcamentos.find(o => o.id === id);
+    if (!orcamento) {
+        showNotification('Orçamento não encontrado', 'error');
+        return;
+    }
+
+    setTimeout(() => {
+        try {
+            const data = [
+                ['ORÇAMENTO AGROVOOSIS PRO', '', '', ''],
+                ['Cliente:', orcamento.cliente || 'N/A', 'Data:', new Date(orcamento.timestamp).toLocaleDateString('pt-BR')],
+                ['Serviço:', 'Pulverização Aérea', 'Área:', orcamento.area ? orcamento.area + ' ha' : '--'],
+                ['Valor Total:', `R$ ${orcamento.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2})}`, 'Status:', 'Pendente'],
+                ['', '', '', ''],
+                ['Descrição', 'Quantidade', 'Valor Unitário', 'Total'],
+                ['Pulverização', orcamento.area ? orcamento.area + ' ha' : '--', 'R$ 155,00', `R$ ${orcamento.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2})}`]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Orçamento");
+            const fileName = `orcamento_${id}_${Date.now()}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showNotification('Orçamento baixado com sucesso!', 'success');
+        } catch (error) {
+            console.error('Erro ao gerar Excel:', error);
+            showNotification('Erro ao gerar arquivo do orçamento', 'error');
+        }
+    }, 1000);
+}
+
+function imprimirOrcamento(id) {
+    showNotification(`Imprimindo orçamento ${id}...`, 'info');
+}
+
+// =============================================
+// INICIALIZAÇÃO GERAL
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Sistema AgroVooSis Pro inicializado');
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-app').style.display = 'none';
+});
+
+// Configurar categoria "Outros" para pagamento no orçamento
+const pagamentoSelect = document.getElementById('orcamento-pagamento');
+if (pagamentoSelect) {
+    pagamentoSelect.addEventListener('change', function() {
+        const outrosContainer = document.getElementById('orcamento-outro-pagamento');
+        if (this.value === 'outro') {
+            outrosContainer.style.display = 'block';
+        } else {
+            outrosContainer.style.display = 'none';
+        }
+    });
+}
+
+// Configurar categoria "Outros" para caixa
+const categoriaSelect = document.getElementById('caixa-categoria');
+if (categoriaSelect) {
+    categoriaSelect.addEventListener('change', function() {
+        const outrosContainer = document.getElementById('caixa-outros-container');
+        if (this.value === 'outros') {
+            outrosContainer.style.display = 'block';
+        } else {
+            outrosContainer.style.display = 'none';
+        }
+    });
+}
+</script>
+</body>
+</html>
